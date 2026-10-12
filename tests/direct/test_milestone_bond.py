@@ -118,3 +118,29 @@ def test_malformed_llm_quote_cannot_accept(direct_vm, scenario):
     with direct_vm.expect_revert("Quote is not in pinned source"):
         contract.review_milestone(ID, 1)
     assert contract.get_project(ID)["status"] == "REVIEW_READY"
+
+
+def test_changed_public_evidence_cannot_be_reviewed(direct_vm, scenario):
+    contract, _, author = scenario
+    direct_vm.sender = author
+    contract.accept_project(ID)
+    contract.submit_milestone(ID, 11, HEAD1, 101, 1)
+    mock(direct_vm, issue=ISSUE + " silently edited")
+    with direct_vm.expect_revert("Frozen issue changed"):
+        contract.review_milestone(ID, 1)
+    assert contract.get_project(ID)["status"] == "REVIEW_READY"
+
+
+def test_insufficient_evidence_does_not_credit_author(direct_vm, scenario):
+    contract, _, author = scenario
+    direct_vm.sender = author
+    contract.accept_project(ID)
+    mock(direct_vm, status="INSUFFICIENT")
+    contract.submit_milestone(ID, 11, HEAD1, 101, 1)
+    contract.review_milestone(ID, 1)
+    review = contract.get_project(ID)["milestones"][0]["reviews"][0]
+    assert review["outcome"] == "INCONCLUSIVE"
+    direct_vm.warp(iso(NOW + 600))
+    contract.finalize_milestone(ID)
+    assert contract.get_project(ID)["status"] == "REVISE"
+    assert contract.get_accounting(addr(author))["claimable"] == "0"

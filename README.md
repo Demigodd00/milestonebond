@@ -4,6 +4,8 @@ Ship in public. Pay on proof. MilestoneBond is a standalone GenLayer StudioNet p
 
 [Live app](https://demigodd00.github.io/milestonebond/) · [Dedicated source repository](https://github.com/Demigodd00/milestonebond) · [StudioNet contract](https://explorer-studio.genlayer.com/contracts/0xb437593b7656254226ce496bc6f9A052A11D6345) · [Public demo issue](https://github.com/Demigodd00/milestonebond/issues/1)
 
+The [live verification record](public/verification.json) distinguishes each finalized execution from the contract's application-level stage status. An `ACCEPTED` review is still pending until its challenge window closes and the separate finalization transaction succeeds.
+
 ## Why it exists
 
 One-off bounties pay for one accepted patch. Real projects ship in stages. MilestoneBond makes those stages explicit and sequential. It does not reuse the PatchBond contract or pay on a PR link alone. The sponsor freezes a GitHub issue body hash, repository and base commit, workflow content and identity, author wallet, allowed source paths, criteria, deadlines and per-stage amounts. Later stages cannot submit until earlier ones settle.

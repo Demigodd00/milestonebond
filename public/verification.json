@@ -1,0 +1,175 @@
+{
+  "generated_at": "2026-10-12T03:01:13.081063+00:00",
+  "network": "StudioNet",
+  "chain_id": 61999,
+  "scope": "public sandbox execution; simulated GEN only; not a security audit or production-value proof",
+  "app_url": "https://demigodd00.github.io/milestonebond/",
+  "repository": "https://github.com/Demigodd00/milestonebond",
+  "contract": "0xb437593b7656254226ce496bc6f9A052A11D6345",
+  "contract_url": "https://explorer-studio.genlayer.com/contracts/0xb437593b7656254226ce496bc6f9A052A11D6345",
+  "source_sha256": "15085f0aba712bbacb1d99713be343aa551f19dc3b6ae02004fd8afca6c16d4f",
+  "source_verified": true,
+  "config": {
+    "admin": null,
+    "authority": "github.com",
+    "challenge_seconds": 600,
+    "fee_bps": 0,
+    "max_milestones": 4,
+    "max_revisions_per_milestone": 2,
+    "network_scope": "testnet-only",
+    "version": "milestonebond.v0.2"
+  },
+  "project_id": "MB-LIVE-001",
+  "project_status": "REVIEW_PENDING",
+  "issue_url": "https://github.com/Demigodd00/milestonebond/issues/1",
+  "issue_sha256": "623020dff6c8e6969e81f5683fdea938d29cc810726b31afd92f756f97d39bb9",
+  "sponsor": "0x0bcbcde568096ea2c93e71d5f33acd45be00590e",
+  "author": "0xc61438037047f3cc7ca519b069e0ae124dde637c",
+  "remaining_atto": "2000000000000000",
+  "stages": [
+    {
+      "index": 0,
+      "title": "Idempotent order creation",
+      "criteria": [
+        "Repeated calls with the same nonempty key return the same order record, not a newly numbered order."
+      ],
+      "amount_atto": "1000000000000000",
+      "status": "REVIEW_PENDING",
+      "opened_at": 1791773418,
+      "settled_at": 0,
+      "reviews": [
+        {
+          "revision": 1,
+          "pr_number": 2,
+          "pr_url": "https://github.com/Demigodd00/milestonebond/pull/2",
+          "head_sha": "83b5c6d7b6170a6431635ce45aeb25376c5d66c4",
+          "ci_run_id": 38197462942,
+          "ci_attempt": 1,
+          "ci_url": "https://github.com/Demigodd00/milestonebond/actions/runs/38197462942",
+          "evidence_sha256": "3a80b66aa0bbe9cc51a6ad7661e8c737c0377ba3dee5572394084baa5649beb7",
+          "evidence_digest_verified": true,
+          "outcome": "ACCEPTED",
+          "scope_ok": true,
+          "checks": [
+            {
+              "id": "C1",
+              "quote": "if key in orders:\n        return orders[key]",
+              "reason": "The after source checks whether the key already exists in the orders dict and returns the existing record if so, ensuring repeated calls with the same nonempty key return the same order object rather than creating a new one.",
+              "status": "SUPPORTED"
+            }
+          ],
+          "challenge_used": false,
+          "finalized_at": 0
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "title": "Reject empty keys",
+      "criteria": [
+        "An empty key raises ValueError while repeated nonempty keys still return their original order record."
+      ],
+      "amount_atto": "1000000000000000",
+      "status": "LOCKED",
+      "opened_at": 0,
+      "settled_at": 0,
+      "reviews": []
+    }
+  ],
+  "accounting": {
+    "claimable": "0",
+    "credited": "0",
+    "deposited": "2000000000000000",
+    "locked": "2000000000000000",
+    "withdrawn": "0"
+  },
+  "author_claimable_atto": "0",
+  "transactions": [
+    {
+      "hash": "0x8e5096c17660a2b6ffb6fd8145ad8fbfcad21f943b8ba0c835319e2d5c24ce33",
+      "url": "https://explorer-studio.genlayer.com/transactions/0x8e5096c17660a2b6ffb6fd8145ad8fbfcad21f943b8ba0c835319e2d5c24ce33",
+      "method": "create_project",
+      "role": "sponsor",
+      "status": "FINALIZED",
+      "execution_success": false,
+      "on_active_contract": false,
+      "validator_votes": {
+        "0x03D58A4DeF6fDFc032A56374785a5F571D07Bc11": "agree",
+        "0x36728d2a123aB444E603EE5b2ad17d18Bb193557": "agree",
+        "0x3E5ee2507cc167C9925Bf10c67D7986581112024": "idle",
+        "0x6737ca1d6BDF8b7C4f19143E2D55581Ca64eb7C3": "agree",
+        "0x772ffCd1dF6Cc566eC4b8d3f4F4f8eBbb6B36C84": "idle"
+      }
+    },
+    {
+      "hash": "0xad5587780403ce039d487b1d5a87423f27ed4bd8e76b3a83f58ecf60db4250b3",
+      "url": "https://explorer-studio.genlayer.com/transactions/0xad5587780403ce039d487b1d5a87423f27ed4bd8e76b3a83f58ecf60db4250b3",
+      "method": "create_project",
+      "role": "sponsor",
+      "status": "FINALIZED",
+      "execution_success": true,
+      "on_active_contract": true,
+      "validator_votes": {
+        "0x36728d2a123aB444E603EE5b2ad17d18Bb193557": "agree",
+        "0x5310dcF075E0BD47d29B8ec6581F736C767f54D2": "agree",
+        "0x772ffCd1dF6Cc566eC4b8d3f4F4f8eBbb6B36C84": "agree",
+        "0x9ea87b28DcA2F79fe108CF06a4c13B4c876AC23d": "idle",
+        "0xcE1d6bBB36B744536153966B4DD42276f5ADd0F8": "idle"
+      }
+    },
+    {
+      "hash": "0x6fd0b5ed610b3eb0deafd5437fa789f7af66d9bdf016403dcef813b28ff51edd",
+      "url": "https://explorer-studio.genlayer.com/transactions/0x6fd0b5ed610b3eb0deafd5437fa789f7af66d9bdf016403dcef813b28ff51edd",
+      "method": "accept_project",
+      "role": "author",
+      "status": "FINALIZED",
+      "execution_success": true,
+      "on_active_contract": true,
+      "validator_votes": {
+        "0x03D58A4DeF6fDFc032A56374785a5F571D07Bc11": "agree",
+        "0x36728d2a123aB444E603EE5b2ad17d18Bb193557": "agree",
+        "0x3E5ee2507cc167C9925Bf10c67D7986581112024": "agree",
+        "0x6737ca1d6BDF8b7C4f19143E2D55581Ca64eb7C3": "agree",
+        "0xcE1d6bBB36B744536153966B4DD42276f5ADd0F8": "agree"
+      }
+    },
+    {
+      "hash": "0x0e7a8650cc051dadd67912cda7b8bf578741ea451469fff8c1470cd35ef0086e",
+      "url": "https://explorer-studio.genlayer.com/transactions/0x0e7a8650cc051dadd67912cda7b8bf578741ea451469fff8c1470cd35ef0086e",
+      "method": "submit_milestone",
+      "role": "author",
+      "status": "FINALIZED",
+      "execution_success": true,
+      "on_active_contract": true,
+      "validator_votes": {
+        "0x03D58A4DeF6fDFc032A56374785a5F571D07Bc11": "idle",
+        "0x6737ca1d6BDF8b7C4f19143E2D55581Ca64eb7C3": "agree",
+        "0x772ffCd1dF6Cc566eC4b8d3f4F4f8eBbb6B36C84": "idle",
+        "0x90402341F0B0e97b23023c0a87de957FB7148E0F": "agree",
+        "0xBBb165E4c9d73a1493D363280f7067Cd07891dBE": "agree"
+      }
+    },
+    {
+      "hash": "0x62f9e7196b70de52e337a6292705a1b80bad83383fa7cfe7dc3a359c3eeed842",
+      "url": "https://explorer-studio.genlayer.com/transactions/0x62f9e7196b70de52e337a6292705a1b80bad83383fa7cfe7dc3a359c3eeed842",
+      "method": "review_milestone",
+      "role": "sponsor",
+      "status": "FINALIZED",
+      "execution_success": true,
+      "on_active_contract": true,
+      "validator_votes": {
+        "0x4404Fb70d490c935758146f42A73DC850FF95C71": "agree",
+        "0x76c25AFC12c75485703cCFfd0083AA6201455B25": "idle",
+        "0x9ea87b28DcA2F79fe108CF06a4c13B4c876AC23d": "agree",
+        "0xE6BD8050758CB15fC88387223E31Ae2708B119dC": "idle",
+        "0xacc2459F341D7a887bcA8FAA62F1EC9378d4Bc67": "agree"
+      }
+    }
+  ],
+  "limitations": [
+    "Direct tests are mocked; listed StudioNet transaction receipts are the live execution evidence.",
+    "GitHub repository control, CI runner/dependencies, source availability and criterion quality remain external trust dependencies.",
+    "A review marked ACCEPTED is not a payout until its challenge window closes and finalize_milestone succeeds.",
+    "Withdrawable onchain credits are not proof that an outbound native transfer finalized."
+  ]
+}
