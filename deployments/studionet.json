@@ -1,0 +1,26 @@
+{
+  "contract": "MilestoneBond",
+  "version": "milestonebond.v0.1",
+  "network": "studionet",
+  "chain_id": 61999,
+  "address": "0xb910Aa5fD196f321Ce249b325918754c77787ebf",
+  "transaction_hash": "0x4ab36e46055adf2418dc04de3dd2b7791b9aa1eb44d282ae883b5b24c8b9eb1d",
+  "deployer": "0x4a2DD0B09E63528b3d0A0a326eC255833eaDA887",
+  "signer_mode": "disposable_deployment_only",
+  "source_sha256": "5efb174efe63badc1178d25c6cb49873bbed1f5777e95363c6f5388f0b0c97f8",
+  "runner_dependency": "# { \"Depends\": \"py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6\" }",
+  "receipt_status": "FINALIZED",
+  "execution_result": "SUCCESS",
+  "verified_source_and_config": true,
+  "deployed_config": {
+    "admin": null,
+    "authority": "github.com",
+    "challenge_seconds": 600,
+    "fee_bps": 0,
+    "max_milestones": 4,
+    "max_revisions_per_milestone": 2,
+    "network_scope": "testnet-only",
+    "version": "milestonebond.v0.1"
+  },
+  "deployed_at": "2026-10-12T02:40:55.808720+00:00"
+}

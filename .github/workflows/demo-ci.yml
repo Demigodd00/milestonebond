@@ -1,0 +1,17 @@
+name: Milestone demo acceptance
+on:
+  push:
+    branches:
+      - milestone-demo-*
+jobs:
+  acceptance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out pinned source
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run fixture smoke test
+        run: python examples/test_order_service.py
