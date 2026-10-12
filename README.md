@@ -1,3 +1,5 @@
+<img src="public/milestonebond-logo.png" width="96" alt="MilestoneBond logo">
+
 # MilestoneBond
 
 Ship in public. Pay on proof. MilestoneBond is a standalone GenLayer StudioNet prototype for staged software delivery: a sponsor locks 2–4 fixed tranches, an assigned author submits one PR/commit/CI bundle per stage, and GenLayer validators independently re-fetch the public evidence and agree on every criterion before a tranche is credited. This is **simulated test GEN**, not production escrow or an audit.
