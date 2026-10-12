@@ -14,8 +14,9 @@ One-off bounties pay for one accepted patch. Real projects ship in stages. Miles
 
 1. Open the web app and follow the clearly labeled simulated walkthrough for the user flow.
 2. Open **Live projects** to read the independently deployed StudioNet contract. This view never substitutes simulated data for onchain state.
-3. Inspect the contract source at `contracts/milestone_bond.py`, the direct tests in `tests/direct`, the [architecture](docs/ARCHITECTURE.md) and [deployment record](deployments/studionet.json) when available.
-4. For each submitted milestone, compare the project’s onchain criteria and evidence SHA-256 with the pinned GitHub issue, PR head, source and exact CI attempt. A review is not a payout until its challenge window closes and `finalize_milestone` executes successfully.
+3. Open **Create project** to generate terms from a public GitHub issue, commit and workflow, then inspect the JSON and exact deposit before signing. The contract re-fetches the sources; browser-generated hashes alone are not authority.
+4. Inspect the contract source at `contracts/milestone_bond.py`, the direct tests in `tests/direct`, the [architecture](docs/ARCHITECTURE.md) and [deployment record](deployments/studionet.json) when available.
+5. For each submitted milestone, compare the project’s onchain criteria and evidence SHA-256 with the pinned GitHub issue, PR head, source and exact CI attempt. A review is not a payout until its challenge window closes and `finalize_milestone` executes successfully.
 
 ## Local development
 
