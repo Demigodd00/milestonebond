@@ -60,9 +60,9 @@ def main() -> None:
     if hash_source(deployed) != hash_source(source):
         raise RuntimeError("Onchain source differs from local release")
     config = client.read_contract(address=address, function_name="get_config", args=[], account=account, transaction_hash_variant=TransactionHashVariant.LATEST_FINAL)
-    if not isinstance(config, dict) or config.get("version") != "milestonebond.v0.1" or config.get("challenge_seconds") != 600 or config.get("fee_bps") != 0:
+    if not isinstance(config, dict) or config.get("version") != "milestonebond.v0.2" or config.get("challenge_seconds") != 600 or config.get("fee_bps") != 0:
         raise RuntimeError("Onchain config differs from local release")
-    record = {"contract": "MilestoneBond", "version": "milestonebond.v0.1", "network": "studionet", "chain_id": 61999,
+    record = {"contract": "MilestoneBond", "version": "milestonebond.v0.2", "network": "studionet", "chain_id": 61999,
               "address": address, "transaction_hash": str(tx), "deployer": account.address,
               "signer_mode": "disposable_deployment_only", "source_sha256": hash_source(source),
               "runner_dependency": source.splitlines()[0], "receipt_status": "FINALIZED", "execution_result": "SUCCESS",

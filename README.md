@@ -2,6 +2,8 @@
 
 Ship in public. Pay on proof. MilestoneBond is a standalone GenLayer StudioNet prototype for staged software delivery: a sponsor locks 2–4 fixed tranches, an assigned author submits one PR/commit/CI bundle per stage, and GenLayer validators independently re-fetch the public evidence and agree on every criterion before a tranche is credited. This is **simulated test GEN**, not production escrow or an audit.
 
+[Live app](https://demigodd00.github.io/milestonebond/) · [Dedicated source repository](https://github.com/Demigodd00/milestonebond) · [StudioNet contract](https://explorer-studio.genlayer.com/contracts/0xb437593b7656254226ce496bc6f9A052A11D6345) · [Public demo issue](https://github.com/Demigodd00/milestonebond/issues/1)
+
 ## Why it exists
 
 One-off bounties pay for one accepted patch. Real projects ship in stages. MilestoneBond makes those stages explicit and sequential. It does not reuse the PatchBond contract or pay on a PR link alone. The sponsor freezes a GitHub issue body hash, repository and base commit, workflow content and identity, author wallet, allowed source paths, criteria, deadlines and per-stage amounts. Later stages cannot submit until earlier ones settle.
@@ -38,4 +40,4 @@ The direct tests use mocked GitHub and LLM responses. They do not exercise the v
 - StudioNet is a sandbox. Its GEN has no monetary value, its state can be reset, and smart-contract recipient transfer behavior is not guaranteed. Use test-only externally owned wallets. Withdrawals require a separate successful transaction and outbound transfer confirmation.
 - There is no background scheduler. Anyone can call the relevant review/finalization or expiry transaction when eligible. A pending review cannot be bypassed by expiry refund.
 
-See [architecture](docs/ARCHITECTURE.md), [deployment guide](docs/DEPLOYMENT.md) and [security notes](docs/SECURITY.md).
+See [architecture](docs/ARCHITECTURE.md), [deployment guide](docs/DEPLOYMENT.md) and [security notes](docs/SECURITY.md). The first v0.1 StudioNet deployment and its failed project-creation transaction are retained in `deployments/history/` and the live demo journal; v0.2 is the active contract after replacing an oversized GitHub commit response with a bounded metadata endpoint.

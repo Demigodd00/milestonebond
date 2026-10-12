@@ -5,7 +5,7 @@ import json
 import re
 from datetime import datetime
 
-VERSION = "milestonebond.v0.1"
+VERSION = "milestonebond.v0.2"
 WINDOW = 600
 MAX_SOURCE = 24000
 
@@ -298,7 +298,9 @@ class MilestoneBond(gl.Contract):
             require(repository.get("private") is False and repository.get("full_name", "").lower() == repo.lower(), "Repository must be public and canonical")
             issue = api(repo, "/issues/" + str(issue_number))
             require("pull_request" not in issue and issue.get("number") == issue_number and isinstance(issue.get("body"), str) and 0 < len(issue["body"].encode("utf-8")) <= 5000 and digest(issue["body"]) == issue_sha256, "Issue commitment mismatch")
-            require(api(repo, "/commits/" + base_sha).get("sha") == base_sha, "Base commit not found")
+            # The full /commits response includes all changed files and can be
+            # much larger than the metadata needed to verify a frozen base.
+            require(api(repo, "/git/commits/" + base_sha).get("sha") == base_sha, "Base commit not found")
             workflow = raw(repo, base_sha, workflow_path)
             require(digest(workflow) == workflow_sha256 and len(workflow.encode("utf-8")) == workflow_bytes, "Workflow commitment mismatch")
             return compact({"repository_id": number(repository.get("id"), 1, 2**53 - 1, "repository ID"), "issue_body": issue["body"]})

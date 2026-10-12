@@ -21,7 +21,7 @@ export async function read<T>(d:Deployment,method:string,args:unknown[]=[]):Prom
  return JSON.parse(JSON.stringify(value,(_,v)=>typeof v==='bigint'?v.toString():v)) as T;
 }
 export async function verifyDeployment(d:Deployment){
- if(!d.verified||!/^0x[0-9a-fA-F]{40}$/.test(d.address||'')||d.chainId!==61999||d.network!=='studionet'||d.version!=='milestonebond.v0.1'||!/^([0-9a-f]{64})$/.test(d.sourceSha256))throw Error('Live signing is disabled until the StudioNet contract is verified.');
+ if(!d.verified||!/^0x[0-9a-fA-F]{40}$/.test(d.address||'')||d.chainId!==61999||d.network!=='studionet'||d.version!=='milestonebond.v0.2'||!/^([0-9a-f]{64})$/.test(d.sourceSha256))throw Error('Live signing is disabled until the StudioNet contract is verified.');
  const config=await read<{version:string;challenge_seconds:number;fee_bps:number}>(d,'get_config');
  if(config.version!==d.version||Number(config.challenge_seconds)!==600||Number(config.fee_bps)!==0)throw Error('Onchain policy differs from this release.');
  const code=await reader.getContractCode(d.address as `0x${string}`);

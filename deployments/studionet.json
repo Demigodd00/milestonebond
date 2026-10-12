@@ -1,13 +1,13 @@
 {
   "contract": "MilestoneBond",
-  "version": "milestonebond.v0.1",
+  "version": "milestonebond.v0.2",
   "network": "studionet",
   "chain_id": 61999,
-  "address": "0xb910Aa5fD196f321Ce249b325918754c77787ebf",
-  "transaction_hash": "0x4ab36e46055adf2418dc04de3dd2b7791b9aa1eb44d282ae883b5b24c8b9eb1d",
-  "deployer": "0x4a2DD0B09E63528b3d0A0a326eC255833eaDA887",
+  "address": "0xb437593b7656254226ce496bc6f9A052A11D6345",
+  "transaction_hash": "0xab719e57d14e0918bed93858f69cbfbcf3bb268c80f625643f8d38a605779210",
+  "deployer": "0x7aEA7DC09AcB65be4642BB2f863FBc871f077099",
   "signer_mode": "disposable_deployment_only",
-  "source_sha256": "5efb174efe63badc1178d25c6cb49873bbed1f5777e95363c6f5388f0b0c97f8",
+  "source_sha256": "15085f0aba712bbacb1d99713be343aa551f19dc3b6ae02004fd8afca6c16d4f",
   "runner_dependency": "# { \"Depends\": \"py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6\" }",
   "receipt_status": "FINALIZED",
   "execution_result": "SUCCESS",
@@ -20,7 +20,7 @@
     "max_milestones": 4,
     "max_revisions_per_milestone": 2,
     "network_scope": "testnet-only",
-    "version": "milestonebond.v0.1"
+    "version": "milestonebond.v0.2"
   },
-  "deployed_at": "2026-10-12T02:40:55.808720+00:00"
+  "deployed_at": "2026-10-12T02:49:10.963785+00:00"
 }

@@ -46,7 +46,7 @@ def mock(vm, *, base=BASE, head=HEAD1, run_id=101, pr=11, status="SUPPORTED", is
     records = {
         "": {"id": 77, "private": False, "full_name": REPO},
         "/issues/7": {"number": 7, "body": issue},
-        "/commits/" + BASE: {"sha": BASE},
+        "/git/commits/" + BASE: {"sha": BASE},
         "/commits/" + head + "?per_page=100": {"sha": head, "parents": [{"sha": base}], "files": [{"filename": "src/orders.py", "status": "modified"}]},
         "/pulls/" + str(pr): {"number": pr, "head": {"sha": head, "repo": {"id": 77}}, "base": {"repo": {"id": 77}}},
         f"/actions/runs/{run_id}/attempts/1": {"id": run_id, "run_attempt": 1, "head_sha": head, "head_repository": {"id": 77}, "repository": {"id": 77}, "workflow_id": 55, "path": ".github/workflows/ci.yml@main", "event": "push", "status": "completed", "conclusion": "success", "run_started_at": iso(run_started)},

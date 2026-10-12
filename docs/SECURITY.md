@@ -1,6 +1,6 @@
 # Security and reviewer limitations
 
-MilestoneBond v0.1 is a StudioNet prototype with simulated GEN. It is not audited and must not be used with real-value assets.
+MilestoneBond v0.2 is a StudioNet prototype with simulated GEN. It is not audited and must not be used with real-value assets.
 
 Critical external trust remains with GitHub availability, repository control, workflow configuration, CI runner/dependency integrity, and the meaning of sponsor-authored criteria. A repository owner could weaken tests before the commitment; the contract freezes workflow content, not the quality of its external dependencies. GenLayer validators provide independent retrieval and semantic agreement, not proof that code will behave safely in deployment.
 
