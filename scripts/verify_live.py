@@ -68,6 +68,7 @@ def main():
     if int(sponsor["deposited"]) != int(sponsor["locked"]) + int(sponsor["credited"]) + int(sponsor["withdrawn"]):
         raise RuntimeError("Escrow accounting invariant failed")
     transactions = []
+    transfers = []
     if JOURNAL.exists():
         for item in json.loads(JOURNAL.read_text(encoding="utf-8"))["transactions"]:
             receipt = client.get_transaction(transaction_hash=item["hash"])
@@ -79,6 +80,13 @@ def main():
                                  "method": item["method"], "role": item["role"], "status": status, "execution_success": success,
                                  "on_active_contract": str(receipt.get("to_address", "")).lower() == address.lower(),
                                  "validator_votes": votes})
+            if item["method"] == "withdraw" and success:
+                for triggered_hash in receipt.get("triggered_transactions", []):
+                    transfer = client.get_transaction(transaction_hash=triggered_hash)
+                    transfers.append({"hash": triggered_hash, "url": f"https://explorer-studio.genlayer.com/transactions/{triggered_hash}",
+                                      "parent_withdrawal": item["hash"], "status": transfer.get("status_name") or transfer.get("statusName"),
+                                      "to": transfer.get("to_address"), "value_atto": str(transfer.get("value")),
+                                      "value_credited": transfer.get("value_credited")})
     report = {"generated_at": datetime.now(timezone.utc).isoformat(), "network": "StudioNet", "chain_id": 61999,
               "scope": "public sandbox execution; simulated GEN only; not a security audit or production-value proof",
               "app_url": "https://demigodd00.github.io/milestonebond/", "repository": "https://github.com/Demigodd00/milestonebond",
@@ -87,7 +95,7 @@ def main():
               "project_id": project["id"], "project_status": project["status"], "issue_url": f"https://github.com/{project['repo']}/issues/{project['issue_number']}",
               "issue_sha256": project["issue_sha256"], "sponsor": project["sponsor"], "author": project["author"],
               "remaining_atto": project["remaining"], "stages": stages, "accounting": sponsor, "author_claimable_atto": author["claimable"],
-              "transactions": transactions,
+              "transactions": transactions, "outbound_transfers": transfers,
               "limitations": ["Direct tests are mocked; listed StudioNet transaction receipts are the live execution evidence.",
                               "GitHub repository control, CI runner/dependencies, source availability and criterion quality remain external trust dependencies.",
                               "A review marked ACCEPTED is not a payout until its challenge window closes and finalize_milestone succeeds.",

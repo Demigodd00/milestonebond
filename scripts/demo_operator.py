@@ -98,10 +98,12 @@ def main():
         write("sponsor", "review_milestone", [PROJECT, read()["milestones"][read()["current"]]["revision"]])
     elif command == "finalize":
         write("sponsor", "finalize_milestone", [PROJECT])
+    elif command == "withdraw":
+        write("author", "withdraw", [])
     elif command == "state":
         print(json.dumps(read(), indent=2, default=str))
     else:
-        raise SystemExit("Usage: demo_operator.py accounts|fund|create|accept|submit PR HEAD RUN ATTEMPT|review|finalize|state")
+        raise SystemExit("Usage: demo_operator.py accounts|fund|create|accept|submit PR HEAD RUN ATTEMPT|review|finalize|withdraw|state")
 
 
 if __name__ == "__main__":
