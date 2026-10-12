@@ -83,8 +83,11 @@ def main():
             if item["method"] == "withdraw" and success:
                 for triggered_hash in receipt.get("triggered_transactions", []):
                     transfer = client.get_transaction(transaction_hash=triggered_hash)
+                    transfer_status = transfer.get("status_name") or transfer.get("statusName")
+                    if transfer_status != "FINALIZED" or str(transfer.get("to_address", "")).lower() != project["author"].lower() or int(transfer.get("value", 0)) != 2 * 10**15 or transfer.get("value_credited") is not True:
+                        raise RuntimeError("Outbound test-GEN transfer is not finalized, credited, or exact")
                     transfers.append({"hash": triggered_hash, "url": f"https://explorer-studio.genlayer.com/transactions/{triggered_hash}",
-                                      "parent_withdrawal": item["hash"], "status": transfer.get("status_name") or transfer.get("statusName"),
+                                      "parent_withdrawal": item["hash"], "status": transfer_status,
                                       "to": transfer.get("to_address"), "value_atto": str(transfer.get("value")),
                                       "value_credited": transfer.get("value_credited")})
     report = {"generated_at": datetime.now(timezone.utc).isoformat(), "network": "StudioNet", "chain_id": 61999,
@@ -95,7 +98,7 @@ def main():
               "project_id": project["id"], "project_status": project["status"], "issue_url": f"https://github.com/{project['repo']}/issues/{project['issue_number']}",
               "issue_sha256": project["issue_sha256"], "sponsor": project["sponsor"], "author": project["author"],
               "remaining_atto": project["remaining"], "stages": stages, "accounting": sponsor, "author_claimable_atto": author["claimable"],
-              "transactions": transactions, "outbound_transfers": transfers,
+              "transactions": transactions, "outbound_transfers": transfers, "outbound_transfer_verified": len(transfers) == 1,
               "limitations": ["Direct tests are mocked; listed StudioNet transaction receipts are the live execution evidence.",
                               "GitHub repository control, CI runner/dependencies, source availability and criterion quality remain external trust dependencies.",
                               "A review marked ACCEPTED is not a payout until its challenge window closes and finalize_milestone succeeds.",

@@ -2,7 +2,7 @@
 
 Ship in public. Pay on proof. MilestoneBond is a standalone GenLayer StudioNet prototype for staged software delivery: a sponsor locks 2–4 fixed tranches, an assigned author submits one PR/commit/CI bundle per stage, and GenLayer validators independently re-fetch the public evidence and agree on every criterion before a tranche is credited. This is **simulated test GEN**, not production escrow or an audit.
 
-[Live app](https://demigodd00.github.io/milestonebond/) · [Dedicated source repository](https://github.com/Demigodd00/milestonebond) · [StudioNet contract](https://explorer-studio.genlayer.com/contracts/0xb437593b7656254226ce496bc6f9A052A11D6345) · [Public demo issue](https://github.com/Demigodd00/milestonebond/issues/1)
+[Live app](https://demigodd00.github.io/milestonebond/) · [Dedicated source repository](https://github.com/Demigodd00/milestonebond) · [StudioNet contract](https://explorer-studio.genlayer.com/contracts/0xb437593b7656254226ce496bc6f9A052A11D6345) · [Live two-stage evidence](docs/LIVE_DEMO.md) · [Public demo issue](https://github.com/Demigodd00/milestonebond/issues/1)
 
 The [live verification record](public/verification.json) distinguishes each finalized execution from the contract's application-level stage status. An `ACCEPTED` review is still pending until its challenge window closes and the separate finalization transaction succeeds.
 
