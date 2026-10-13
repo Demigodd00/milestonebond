@@ -1,0 +1,16 @@
+{
+  "generated_at": "2026-10-13T05:19:37.250862+00:00",
+  "network": "StudioNet",
+  "scope": "Isolated internal IC-to-IC failed-message probe; not MilestoneBond external EOA withdrawal evidence",
+  "amount_atto": "1000000000000000",
+  "source_sha256": "170e0efe876622fffc051c3af264e033b09f13b26e61cfe42b9b6ab9d404a9ed",
+  "contract": "0xCB4dD37eC3985B1163Ab4060c3ff235d945eA2D6",
+  "deployment_hash": "0xa76b1e73f653bc8432df2e515eb640d3a7155ea5c09f125bea8d8032df86a352",
+  "parent_hash": "0x340c727f9612725142795d0c3d42e9b1274c37e485504703be9a9588993ef0d5",
+  "parent_execution_success": true,
+  "child_hash": "0x8f70cdb2928ca055daf2044300eecb7c8680d6d18e937037b62547a42d10e897",
+  "child_execution_success": false,
+  "child_value_credited": true,
+  "balance_before": "0",
+  "balance_after": "1000000000000000"
+}

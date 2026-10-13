@@ -113,6 +113,19 @@ def test_confirmed_child_settles_once(direct_vm, scenario):
         contract.withdraw(REQUEST)
 
 
+def test_credited_child_settles_even_if_child_execution_reverts(direct_vm, scenario):
+    """StudioNet can report child execution failure and value_credited=true."""
+    contract, _, author = first_accepted(direct_vm, scenario)
+    direct_vm.sender = author
+    contract.withdraw(REQUEST)
+    receipts(direct_vm, contract, author, child_override={"tx_execution_result_name": "FINISHED_WITH_ERROR"})
+    contract.reconcile_withdrawal(PARENT)
+    accounting = contract.get_accounting(addr(author))
+    assert accounting["withdrawn"] == str(10**16)
+    assert accounting["pending_out"] == "0"
+    assert accounting["claimable"] == "0"
+
+
 @pytest.mark.parametrize("parent_patch,child_patch,reason", [
     ({"from_address": "0x" + "9" * 40}, {}, "parent mismatch"),
     ({"tx_data": ""}, {}, "request mismatch"),
