@@ -15,6 +15,8 @@ BEFORE = "def create_order(key):\n    return new_order(key)\n"
 AFTER1 = "def create_order(key):\n    if key in orders: return orders[key]\n    return new_order(key)\n"
 AFTER2 = "def create_order(key):\n    if key in orders: return orders[key]\n    if not key: raise ValueError('key required')\n    return new_order(key)\n"
 ID = "MB-ORDER-001"
+GITHUB_LOGIN = "fixture-author"
+GITHUB_ID = 42
 
 
 def iso(n):
@@ -40,15 +42,15 @@ def clock(direct_vm):
     warp(iso(NOW))
 
 
-def mock(vm, *, base=BASE, head=HEAD1, run_id=101, pr=11, status="SUPPORTED", issue=ISSUE, workflow=WORKFLOW, after=AFTER1, run_started=NOW, overrides=None, quote_override=None):
+def mock(vm, *, base=BASE, head=HEAD1, run_id=101, pr=11, status="SUPPORTED", issue=ISSUE, workflow=WORKFLOW, after=AFTER1, run_started=NOW, overrides=None, quote_override=None, author_wallet=None):
     overrides = overrides or {}
     vm.clear_mocks()
     records = {
         "": {"id": 77, "private": False, "full_name": REPO},
         "/issues/7": {"number": 7, "body": issue},
         "/git/commits/" + BASE: {"sha": BASE},
-        "/commits/" + head + "?per_page=100": {"sha": head, "parents": [{"sha": base}], "files": [{"filename": "src/orders.py", "status": "modified"}]},
-        "/pulls/" + str(pr): {"number": pr, "head": {"sha": head, "repo": {"id": 77}}, "base": {"repo": {"id": 77}}},
+        "/commits/" + head + "?per_page=100": {"sha": head, "author": {"id": GITHUB_ID}, "parents": [{"sha": base}], "files": [{"filename": "src/orders.py", "status": "modified"}]},
+        "/pulls/" + str(pr): {"number": pr, "state": "open", "merged_at": None, "user": {"id": GITHUB_ID, "login": GITHUB_LOGIN}, "body": "MilestoneBond-Claim: " + ID + " " + str(author_wallet or "0x" + "0" * 40).lower() + " " + head, "head": {"sha": head, "repo": {"id": 77}}, "base": {"repo": {"id": 77}}},
         f"/actions/runs/{run_id}/attempts/1": {"id": run_id, "run_attempt": 1, "head_sha": head, "head_repository": {"id": 77}, "repository": {"id": 77}, "workflow_id": 55, "path": ".github/workflows/ci.yml@main", "event": "push", "status": "completed", "conclusion": "success", "run_started_at": iso(run_started)},
         f"/actions/runs/{run_id}/attempts/1/jobs?per_page=100": {"total_count": 1, "jobs": [{"id": 1000 + run_id, "run_id": run_id, "head_sha": head, "name": "acceptance", "status": "completed", "conclusion": "success", "steps": [{"number": 1, "name": "tests", "status": "completed", "conclusion": "success"}]}]},
     }
@@ -56,6 +58,7 @@ def mock(vm, *, base=BASE, head=HEAD1, run_id=101, pr=11, status="SUPPORTED", is
         records[suffix].update(patch)
     for suffix, value in records.items():
         vm.mock_web("^" + re.escape("https://api.github.com/repos/" + REPO + suffix) + "$", {"status": 200, "body": json.dumps(value)})
+    vm.mock_web("^https://api.github.com/users/fixture-author$", {"status": 200, "body": json.dumps({"id": GITHUB_ID, "login": GITHUB_LOGIN})})
     for commit, source in [(BASE, BEFORE), (HEAD1, AFTER1), (HEAD2, AFTER2), (BAD, after)]:
         if commit == head:
             source = after
@@ -67,7 +70,7 @@ def mock(vm, *, base=BASE, head=HEAD1, run_id=101, pr=11, status="SUPPORTED", is
 
 def terms(author):
     return {"id": ID, "title": "Safer order API", "repo": REPO, "issue_number": 7,
-            "issue_sha256": hashlib.sha256(ISSUE.encode()).hexdigest(), "base_sha": BASE, "author": addr(author),
+            "issue_sha256": hashlib.sha256(ISSUE.encode()).hexdigest(), "base_sha": BASE, "author": addr(author), "author_github_login": GITHUB_LOGIN, "author_github_id": GITHUB_ID,
             "workflow_path": ".github/workflows/ci.yml", "workflow_sha256": hashlib.sha256(WORKFLOW.encode()).hexdigest(),
             "workflow_bytes": len(WORKFLOW.encode()), "workflow_id": 55, "required_job": "acceptance", "accept_by": NOW + 1200,
             "milestones": [
@@ -78,7 +81,7 @@ def terms(author):
 
 @pytest.fixture
 def scenario(direct_vm, direct_deploy, direct_alice, direct_bob):
-    mock(direct_vm)
+    mock(direct_vm, author_wallet=addr(direct_bob))
     contract = direct_deploy("contracts/milestone_bond.py")
     direct_vm.sender = direct_alice
     direct_vm.deal(direct_alice, 10**18)

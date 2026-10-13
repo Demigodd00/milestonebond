@@ -1,4 +1,4 @@
-"""Export a read-only public verification record for the StudioNet demo."""
+"""Rebuild the historical v0.2 StudioNet verification record only."""
 from __future__ import annotations
 
 import base64
@@ -16,7 +16,7 @@ from genlayer_py.types import TransactionHashVariant
 ROOT = Path(__file__).resolve().parents[1]
 DEPLOYMENT = json.loads((ROOT / "deployments" / "studionet.json").read_text(encoding="utf-8"))
 JOURNAL = ROOT / ".local" / "demo-state.json"
-OUTPUT = ROOT / "public" / "verification.json"
+OUTPUT = ROOT / "public" / "verification-v0.2.json"
 
 
 def canonical(value) -> str:

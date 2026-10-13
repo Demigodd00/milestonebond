@@ -4,14 +4,19 @@
 
 `create_project` receives a deposit exactly equal to the sum of 2–4 immutable milestone amounts. It fetches the public GitHub repository, issue, base commit and workflow under GenLayer strict equivalence. The contract stores the issue body and its SHA-256, criteria, paths, fixed recipient, deadlines and funding. A project moves through `AWAITING_AUTHOR → ACTIVE → REVIEW_READY → REVIEW_PENDING`. On acceptance, only the current stage amount is credited to the author, the accepted head becomes the next stage base, and the next stage opens. Final acceptance marks `COMPLETE`. Terminal rejection or eligible expiry credits the sponsor only the **unpaid remainder** and marks `REFUNDED`.
 
-The assigned author alone accepts and submits. Anyone can request review/finalize/recover. Only sponsor or author may challenge once per revision. A challenge re-evaluates the *same* pinned evidence and restarts a 600-second window. Each stage has at most two revisions. A pending review is never eligible for expiry refund. Credits are withdrawn by their owner; accounting tracks deposited = locked + credited + withdrawn, modulo external transfer finality.
+The assigned author wallet alone accepts and submits. The distinct sponsor wallet must approve the submitted evidence hash before anyone can request review. Anyone can then request review/finalize/recover. Only sponsor or author may challenge once per revision. A challenge re-evaluates the *same* pinned evidence and restarts a 600-second window. Each stage has at most two revisions. A pending review is never eligible for expiry refund.
+
+The explicit delivery policy is `SPONSOR_APPROVED_UNMERGED_COMMIT`: the PR must remain open and unmerged at submission and review; an accepted stage does **not** assert that code merged. Registration freezes the assigned GitHub login and numeric user ID. Submission requires the PR owner and GitHub-associated commit author to match that ID, an exact PR-body `MilestoneBond-Claim: <project> <wallet> <head SHA>` line, and a call signed by the assigned wallet. Sponsor approval then binds the captured evidence hash. This is not a cryptographic proof of a human identity or of a GitHub account controlled by the wallet; it is a jointly authenticated workflow with explicit external GitHub trust.
+
+Withdrawal is two-phase. `withdraw(request_id)` moves the caller's credit to one global `pending_out` slot and emits one finalized native transfer. `reconcile_withdrawal(parent_hash)` has validators fetch the StudioNet parent and its exact triggered child, checking the unique request ID in calldata, timestamp, sender, contract, recipient, amount, linkage, finality, and `value_credited`. A confirmed credit closes pending and increments `withdrawn` once. An unknown or inconsistent receipt leaves the entitlement pending and blocks another transfer. A finalized failed child can restore claimable credit only when the real contract balance covers all locked, claimable and pending obligations; `top_up_recovery` can provide replacement simulated GEN if the protocol did not refund the failed transfer. The donor does not gain a claim. Direct-mode tests model the receipts and cannot prove StudioNet's external-transfer behavior.
 
 ## Evidence boundary
 
 Submission binds a PR number, exact head SHA, run ID and attempt. Under strict equivalence, validators independently check:
 
 - canonical public repository ID and unchanged GitHub issue body hash;
-- PR head and both PR repositories bound to the registered repository;
+- PR head and both PR repositories bound to the registered repository, still open and unmerged;
+- frozen GitHub user ID matching the PR owner and commit author, plus the exact wallet claim in the PR body;
 - a one-parent, direct-child commit of the prior accepted stage head;
 - 1–4 modified existing files, all on the current stage allowlist;
 - unchanged pinned workflow bytes and SHA-256;

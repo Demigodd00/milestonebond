@@ -18,9 +18,9 @@ from genlayer_py.types import TransactionHashVariant, TransactionStatus
 
 ROOT = Path(__file__).resolve().parents[1]
 PRIVATE = ROOT / ".local" / "demo-accounts.json"
-JOURNAL = ROOT / ".local" / "demo-state.json"
-ADDRESS = json.loads((ROOT / "deployments" / "studionet.json").read_text(encoding="utf-8"))["address"]
-PROJECT = "MB-LIVE-001"
+JOURNAL = ROOT / ".local" / "demo-state-v0.3.json"
+ADDRESS = json.loads((ROOT / "deployments" / "studionet_v0.3.json").read_text(encoding="utf-8"))["address"]
+PROJECT = "MB-LIVE-002"
 
 
 def save(path: Path, value: dict) -> None:
@@ -45,11 +45,11 @@ def read():
     return c.read_contract(address=ADDRESS, function_name="get_project", args=[PROJECT], account=accounts()["sponsor"], transaction_hash_variant=TransactionHashVariant.LATEST_FINAL)
 
 
-def write(role: str, method: str, args: list, value: int = 0):
+def write(role: str, method: str, args: list, value: int = 0, expected_failure: bool = False):
     c = client(role)
     tx = c.write_contract(address=ADDRESS, function_name=method, args=args, value=value)
     state = json.loads(JOURNAL.read_text(encoding="utf-8")) if JOURNAL.exists() else {"project": PROJECT, "transactions": []}
-    state["transactions"].append({"role": role, "method": method, "hash": str(tx), "args": args, "at": datetime.now(timezone.utc).isoformat()})
+    state["transactions"].append({"role": role, "method": method, "hash": str(tx), "args": args, "expected_failure": expected_failure, "at": datetime.now(timezone.utc).isoformat()})
     save(JOURNAL, state)
     print(f"submitted={tx} method={method}", flush=True)
     receipt = c.wait_for_transaction_receipt(transaction_hash=tx, status=TransactionStatus.FINALIZED, interval=3000, retries=120, full_transaction=True)
@@ -57,9 +57,11 @@ def write(role: str, method: str, args: list, value: int = 0):
     state["transactions"][-1]["outcome"] = outcome
     save(JOURNAL, state)
     print(json.dumps(outcome), flush=True)
-    if not outcome["execution_success"]:
+    if not outcome["execution_success"] and not expected_failure:
         print(json.dumps(receipt, default=str)[:6000], flush=True)
         raise SystemExit("Transaction did not execute successfully")
+    if outcome["execution_success"] and expected_failure:
+        raise SystemExit("Adversarial probe unexpectedly succeeded")
     return tx
 
 
@@ -68,6 +70,7 @@ def terms(author: str):
     return {"id": PROJECT, "title": "Two-stage public order API fixture", "repo": "Demigodd00/milestonebond", "issue_number": 1,
             "issue_sha256": "623020dff6c8e6969e81f5683fdea938d29cc810726b31afd92f756f97d39bb9",
             "base_sha": "94d80d7b2eab03baff1c65b55216aa31eb98f652", "author": author,
+            "author_github_login": "Demigodd00", "author_github_id": 121986266,
             "workflow_path": ".github/workflows/demo-ci.yml", "workflow_sha256": "4547736e52e9f094a9308f6dca3e1be8a45f551d3ba72a4c62ac04e6c69febe1",
             "workflow_bytes": 414, "workflow_id": 381723182, "required_job": "acceptance", "accept_by": now + 3600,
             "milestones": [
@@ -94,16 +97,26 @@ def main():
     elif command == "submit":
         pr, head, run, attempt = args
         write("author", "submit_milestone", [PROJECT, int(pr), head, int(run), int(attempt)])
+    elif command == "approve":
+        stage = read()["milestones"][read()["current"]]
+        write("sponsor", "approve_submission", [PROJECT, stage["revision"], stage["reviews"][-1]["evidence_hash"]])
     elif command == "review":
         write("sponsor", "review_milestone", [PROJECT, read()["milestones"][read()["current"]]["revision"]])
+    elif command == "probe-review-before-approval":
+        write("sponsor", "review_milestone", [PROJECT, read()["milestones"][read()["current"]]["revision"]], expected_failure=True)
     elif command == "finalize":
         write("sponsor", "finalize_milestone", [PROJECT])
     elif command == "withdraw":
-        write("author", "withdraw", [])
+        import secrets
+        write("author", "withdraw", [secrets.token_hex(32)])
+    elif command == "reconcile":
+        write("sponsor", "reconcile_withdrawal", [args[0]])
+    elif command == "probe-reconcile":
+        write("sponsor", "reconcile_withdrawal", [args[0]], expected_failure=True)
     elif command == "state":
         print(json.dumps(read(), indent=2, default=str))
     else:
-        raise SystemExit("Usage: demo_operator.py accounts|fund|create|accept|submit PR HEAD RUN ATTEMPT|review|finalize|withdraw|state")
+        raise SystemExit("Usage: demo_operator.py accounts|fund|create|accept|submit PR HEAD RUN ATTEMPT|probe-review-before-approval|approve|review|finalize|withdraw|probe-reconcile BAD_HASH|reconcile PARENT_HASH|state")
 
 
 if __name__ == "__main__":

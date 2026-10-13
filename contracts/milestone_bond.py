@@ -5,9 +5,10 @@ import json
 import re
 from datetime import datetime
 
-VERSION = "milestonebond.v0.2"
+VERSION = "milestonebond.v0.3"
 WINDOW = 600
 MAX_SOURCE = 24000
+RPC = "https://studio.genlayer.com/api"
 
 
 def require(ok: bool, message: str) -> None:
@@ -84,6 +85,30 @@ def api(repo: str, suffix: str):
         raise gl.vm.UserError("[SOURCE_UNAVAILABLE] Malformed GitHub response") from None
 
 
+def github_user(login: str) -> dict:
+    try:
+        return json.loads(fetch("https://api.github.com/users/" + login))
+    except gl.vm.UserError:
+        raise
+    except Exception:
+        raise gl.vm.UserError("[SOURCE_UNAVAILABLE] Malformed GitHub user") from None
+
+
+def chain_transaction(tx_hash: str) -> dict:
+    payload = {"jsonrpc": "2.0", "id": 1, "method": "eth_getTransactionByHash", "params": [tx_hash]}
+    response = gl.nondet.web.post(RPC, body=compact(payload).encode("utf-8"), headers={"Content-Type": "application/json"})
+    if response.status != 200 or len(response.body) > 400000:
+        raise gl.vm.UserError("[SOURCE_UNAVAILABLE] StudioNet receipt unavailable")
+    try:
+        result = json.loads(response.body.decode("utf-8"))["result"]
+        require(isinstance(result, dict) and result.get("hash", "").lower() == tx_hash, "Wrong chain receipt")
+        return result
+    except gl.vm.UserError:
+        raise
+    except Exception:
+        raise gl.vm.UserError("[SOURCE_UNAVAILABLE] Malformed StudioNet receipt") from None
+
+
 def raw(repo: str, commit: str, filename: str) -> str:
     return fetch("https://raw.githubusercontent.com/" + repo + "/" + commit + "/" + filename, MAX_SOURCE)
 
@@ -99,8 +124,13 @@ def evidence(project: dict, stage: dict, pr_number: int, head: str, run_id: int,
     pull = api(repo, "/pulls/" + str(pr_number))
     require(pull.get("number") == pr_number and pull.get("head", {}).get("sha") == head, "PR head identity mismatch")
     require(pull.get("base", {}).get("repo", {}).get("id") == project["repository_id"] and pull.get("head", {}).get("repo", {}).get("id") == project["repository_id"], "PR must remain in the registered repository")
+    require(pull.get("state") == "open" and pull.get("merged_at") is None, "Delivery policy requires an unmerged PR")
+    require(pull.get("user", {}).get("id") == project["author_github_id"] and str(pull.get("user", {}).get("login", "")).lower() == project["author_github_login"].lower(), "PR is not owned by assigned GitHub author")
+    claim = "MilestoneBond-Claim: " + project["id"] + " " + project["author"] + " " + head
+    require(isinstance(pull.get("body"), str) and pull["body"].splitlines().count(claim) == 1, "PR lacks exact author-wallet claim")
     commit = api(repo, "/commits/" + head + "?per_page=100")
     require(commit.get("sha") == head, "Commit identity mismatch")
+    require(commit.get("author", {}).get("id") == project["author_github_id"], "Commit author is not assigned GitHub author")
     parents = commit.get("parents", [])
     require(len(parents) == 1 and parents[0].get("sha") == project["base_sha"], "Deliverable must be one direct-child commit of the previous milestone")
     files = commit.get("files", [])
@@ -137,6 +167,7 @@ def evidence(project: dict, stage: dict, pr_number: int, head: str, run_id: int,
         require(total <= MAX_SOURCE, "Complete source exceeds 24KB review bound")
         sources.append({"path": name, "before": proof(before), "after": proof(after)})
     return {"repo": repo, "repository_id": project["repository_id"], "issue_number": project["issue_number"], "issue_sha256": project["issue_sha256"], "pr_number": pr_number,
+            "author_github_id": project["author_github_id"], "author_wallet": project["author"], "claim": claim,
             "base_sha": project["base_sha"], "head_sha": head, "workflow": proof(workflow), "files": sources,
             "ci": {"run_id": run_id, "attempt": attempt, "workflow_id": project["workflow_id"], "started_at": started,
                    "job_id": job["id"], "job_name": job["name"], "steps": [{"number": s["number"], "name": s["name"], "conclusion": s["conclusion"]} for s in steps]}}
@@ -204,16 +235,23 @@ class MilestoneBond(gl.Contract):
     order: DynArray[str]
     credits: TreeMap[str, u256]
     used_runs: TreeMap[str, bool]
+    used_requests: TreeMap[str, bool]
     deposited: u256
     locked: u256
     credited: u256
     withdrawn: u256
+    pending_out: u256
+    pending_withdrawal: str
+    recovery_topups: u256
 
     def __init__(self):
         self.deposited = u256(0)
         self.locked = u256(0)
         self.credited = u256(0)
         self.withdrawn = u256(0)
+        self.pending_out = u256(0)
+        self.pending_withdrawal = ""
+        self.recovery_topups = u256(0)
 
     def _project(self, project_id: str) -> dict:
         require(project_id in self.projects, "Unknown project")
@@ -231,7 +269,7 @@ class MilestoneBond(gl.Contract):
     @gl.public.view
     def get_config(self) -> dict:
         return {"version": VERSION, "challenge_seconds": WINDOW, "max_milestones": 4, "max_revisions_per_milestone": 2,
-                "authority": "github.com", "network_scope": "testnet-only", "fee_bps": 0, "admin": None}
+                "authority": "github.com", "delivery_policy": "SPONSOR_APPROVED_UNMERGED_COMMIT", "network_scope": "testnet-only", "fee_bps": 0, "admin": None}
 
     @gl.public.view
     def get_project(self, project_id: str) -> dict:
@@ -246,13 +284,16 @@ class MilestoneBond(gl.Contract):
     @gl.public.view
     def get_accounting(self, account: str) -> dict:
         return {"deposited": str(self.deposited), "locked": str(self.locked), "credited": str(self.credited),
-                "withdrawn": str(self.withdrawn), "claimable": str(self.credits.get(wallet(account), u256(0)))}
+                "withdrawn": str(self.withdrawn), "pending_out": str(self.pending_out), "recovery_topups": str(self.recovery_topups),
+                "contract_balance": str(self.balance),
+                "claimable": str(self.credits.get(wallet(account), u256(0))),
+                "pending_withdrawal": json.loads(self.pending_withdrawal) if self.pending_withdrawal else None}
 
     @gl.public.write.payable
     def create_project(self, terms_json: str) -> None:
         terms = parse(terms_json)
         require(isinstance(terms, dict), "Terms must be an object")
-        keys = {"id", "title", "repo", "issue_number", "issue_sha256", "base_sha", "author", "workflow_path", "workflow_sha256", "workflow_bytes", "workflow_id", "required_job", "accept_by", "milestones"}
+        keys = {"id", "title", "repo", "issue_number", "issue_sha256", "base_sha", "author", "author_github_login", "author_github_id", "workflow_path", "workflow_sha256", "workflow_bytes", "workflow_id", "required_job", "accept_by", "milestones"}
         require(set(terms) == keys, "Unexpected or missing terms")
         require(re.fullmatch(r"MB-[A-Z0-9-]{3,36}", str(terms["id"])) is not None and terms["id"] not in self.projects, "Invalid or duplicate project ID")
         title = clean(terms["title"], 100, "title")
@@ -262,6 +303,9 @@ class MilestoneBond(gl.Contract):
         issue_sha256, base_sha = sha(terms["issue_sha256"], 64), sha(terms["base_sha"])
         author = wallet(terms["author"])
         require(author != actor(), "Sponsor and author must differ")
+        author_login = clean(terms["author_github_login"], 39, "GitHub author")
+        require(re.fullmatch(r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?", author_login) is not None, "Invalid GitHub author")
+        author_id = number(terms["author_github_id"], 1, 2**53 - 1, "GitHub author ID")
         workflow_path = path(terms["workflow_path"])
         require(re.fullmatch(r"\.github/workflows/[A-Za-z0-9_-]+\.ya?ml", workflow_path) is not None, "Invalid workflow path")
         workflow_sha256 = sha(terms["workflow_sha256"], 64)
@@ -296,6 +340,8 @@ class MilestoneBond(gl.Contract):
         def verify_registration():
             repository = api(repo, "")
             require(repository.get("private") is False and repository.get("full_name", "").lower() == repo.lower(), "Repository must be public and canonical")
+            user = github_user(author_login)
+            require(user.get("id") == author_id and str(user.get("login", "")).lower() == author_login.lower(), "GitHub author identity mismatch")
             issue = api(repo, "/issues/" + str(issue_number))
             require("pull_request" not in issue and issue.get("number") == issue_number and isinstance(issue.get("body"), str) and 0 < len(issue["body"].encode("utf-8")) <= 5000 and digest(issue["body"]) == issue_sha256, "Issue commitment mismatch")
             # The full /commits response includes all changed files and can be
@@ -307,7 +353,8 @@ class MilestoneBond(gl.Contract):
         registration = json.loads(gl.eq_principle.strict_eq(verify_registration))
         project = {"id": terms["id"], "title": title, "repo": repo, "repository_id": registration["repository_id"],
                    "issue_number": issue_number, "issue_sha256": issue_sha256, "issue_body": registration["issue_body"],
-                   "base_sha": base_sha, "author": author, "sponsor": actor(), "workflow_path": workflow_path,
+                   "base_sha": base_sha, "author": author, "author_github_login": author_login, "author_github_id": author_id,
+                   "sponsor": actor(), "workflow_path": workflow_path,
                    "workflow_sha256": workflow_sha256, "workflow_bytes": workflow_bytes, "workflow_id": workflow_id,
                    "required_job": required_job, "accept_by": accept_by, "accepted_at": 0, "created_at": current,
                    "status": "AWAITING_AUTHOR", "current": 0, "milestones": normalized, "remaining": str(total)}
@@ -348,10 +395,21 @@ class MilestoneBond(gl.Contract):
         stage["revision"] += 1
         stage["reviews"].append({"revision": stage["revision"], "pr_number": pr_number, "head_sha": head_sha, "run_id": run_id, "attempt": attempt,
                                  "evidence": json.loads(captured_json), "evidence_hash": digest(captured_json), "submitted_at": now(),
-                                 "status": "SUBMITTED", "challenge_used": False, "assessments": [], "finalized_at": 0})
+                                 "status": "SUBMITTED", "sponsor_approved_at": 0, "challenge_used": False, "assessments": [], "finalized_at": 0})
         stage["status"] = "REVIEW_READY"
         project["status"] = "REVIEW_READY"
         self.used_runs[run_key] = True
+        self._save(project)
+
+    @gl.public.write
+    def approve_submission(self, project_id: str, revision: int, evidence_hash: str) -> None:
+        project = self._project(project_id)
+        require(actor() == project["sponsor"], "Only sponsor may approve delivery")
+        stage = project["milestones"][project["current"]]
+        require(project["status"] == "REVIEW_READY" and stage["revision"] == revision, "Approval unavailable")
+        review = stage["reviews"][-1]
+        require(review["sponsor_approved_at"] == 0 and review["evidence_hash"] == sha(evidence_hash, 64), "Approval must bind exact evidence")
+        review["sponsor_approved_at"] = now()
         self._save(project)
 
     @gl.public.write
@@ -361,6 +419,7 @@ class MilestoneBond(gl.Contract):
         require(project["status"] == "REVIEW_READY" and stage["revision"] == revision, "Stale revision or review unavailable")
         require(now() + WINDOW < stage["due_at"] + 86400, "Review window expired")
         review = stage["reviews"][-1]
+        require(review["sponsor_approved_at"] > 0, "Sponsor has not approved exact delivery")
         result = assess(project, stage, review, "")
         review.update(result)
         review["status"] = "REVIEWED"
@@ -436,11 +495,56 @@ class MilestoneBond(gl.Contract):
         self._save(project)
 
     @gl.public.write
-    def withdraw(self) -> None:
+    def withdraw(self, request_id: str) -> None:
+        request_id = sha(request_id, 64)
+        require(not self.pending_withdrawal, "Another transfer awaits reconciliation")
+        require(request_id not in self.used_requests, "Withdrawal request already used")
         account = actor()
         value = self.credits.get(account, u256(0))
         require(value > 0, "No claimable credit")
         self.credits[account] = u256(0)
         self.credited -= value
-        self.withdrawn += value
+        self.pending_out += value
+        self.pending_withdrawal = compact({"request_id": request_id, "account": account, "amount": str(value), "requested_at": now()})
+        self.used_requests[request_id] = True
         Recipient(gl.message.sender_address).emit_transfer(value=value)
+
+    @gl.public.write.payable
+    def top_up_recovery(self) -> None:
+        require(gl.message.value > 0 and bool(self.pending_withdrawal), "Recovery top-up requires a pending transfer")
+        self.recovery_topups += gl.message.value
+
+    @gl.public.write
+    def reconcile_withdrawal(self, parent_tx_hash: str) -> None:
+        parent_tx_hash = "0x" + sha(parent_tx_hash[2:], 64) if isinstance(parent_tx_hash, str) and parent_tx_hash.startswith("0x") else ""
+        require(bool(self.pending_withdrawal), "No pending transfer")
+        pending = json.loads(self.pending_withdrawal)
+        amount = int(pending["amount"])
+        def inspect():
+            parent = chain_transaction(parent_tx_hash)
+            require(parent.get("status") == "FINALIZED" and str(parent.get("from_address", "")).lower() == pending["account"] and str(parent.get("to_address", "")).lower() == str(gl.message.contract_address).lower(), "Withdrawal parent mismatch")
+            require(parent.get("created_timestamp") == str(pending["requested_at"]), "Withdrawal timestamp mismatch")
+            require(pending["request_id"].encode("ascii").hex() in str(parent.get("tx_data", "")), "Withdrawal request mismatch")
+            messages = parent.get("messages")
+            require(isinstance(messages, list) and len(messages) == 1, "Withdrawal message count mismatch")
+            message = messages[0]
+            require(str(message.get("recipient", "")).lower() == pending["account"] and message.get("value") == amount and message.get("onAcceptance") is False and message.get("data") == "", "Withdrawal transfer mismatch")
+            children = parent.get("triggered_transactions")
+            require(isinstance(children, list) and len(children) == 1 and isinstance(children[0], str) and re.fullmatch(r"0x[0-9a-fA-F]{64}", children[0]), "Withdrawal child unavailable")
+            child = chain_transaction(children[0].lower())
+            require(child.get("status") == "FINALIZED" and str(child.get("triggered_by", "")).lower() == parent_tx_hash and str(child.get("from_address", "")).lower() == str(gl.message.contract_address).lower() and str(child.get("to_address", "")).lower() == pending["account"] and child.get("value") == amount, "Withdrawal child mismatch")
+            require(type(child.get("value_credited")) is bool, "Withdrawal credit outcome unknown")
+            return compact({"child_hash": children[0].lower(), "value_credited": child["value_credited"]})
+        outcome = json.loads(gl.eq_principle.strict_eq(inspect))
+        if outcome["value_credited"]:
+            self.pending_out -= u256(amount)
+            self.withdrawn += u256(amount)
+            self.pending_withdrawal = ""
+            return
+        # A failed child may not refund its value. Keep the entitlement pending
+        # until real balance covers every other claim plus this one.
+        require(self.balance >= self.locked + self.credited + self.pending_out, "Failed transfer needs recovery top-up")
+        self.pending_out -= u256(amount)
+        self.credited += u256(amount)
+        self.credits[pending["account"]] = self.credits.get(pending["account"], u256(0)) + u256(amount)
+        self.pending_withdrawal = ""

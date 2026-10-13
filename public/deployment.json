@@ -1,8 +1,8 @@
 {
   "verified": true,
-  "address": "0xb437593b7656254226ce496bc6f9A052A11D6345",
+  "address": "0xa3Cb18a9846a49aF882Cae38fB79923D7F6DcC34",
   "chainId": 61999,
-  "sourceSha256": "15085f0aba712bbacb1d99713be343aa551f19dc3b6ae02004fd8afca6c16d4f",
-  "version": "milestonebond.v0.2",
+  "sourceSha256": "ad7bc1b8248240c5b3fd088be4fc69f4c90688d3d2680dc08fa0bfb3c54da047",
+  "version": "milestonebond.v0.3",
   "network": "studionet"
 }

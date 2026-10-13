@@ -1,5 +1,5 @@
 import {afterEach,describe,expect,it,vi} from 'vitest';
-import {connect,receiptOutcome} from './chain';
+import {connect,receiptOutcome,verifyDeployment} from './chain';
 
 afterEach(()=>vi.unstubAllGlobals());
 
@@ -38,5 +38,11 @@ describe('transaction outcome',()=>{
  });
  it('treats an unknown finalized receipt as unresolved',()=>{
   expect(receiptOutcome({statusName:'FINALIZED'})).toBe('pending');
+ });
+});
+
+describe('release policy guard',()=>{
+ it('will not sign against the historical v0.2 address',async()=>{
+  await expect(verifyDeployment({verified:true,address:'0xb437593b7656254226ce496bc6f9A052A11D6345',chainId:61999,sourceSha256:'1'.repeat(64),version:'milestonebond.v0.2',network:'studionet'})).rejects.toThrow('Live signing is disabled');
  });
 });

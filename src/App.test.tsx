@@ -9,6 +9,7 @@ describe('reviewer-facing overview',()=>{
     expect(page).toContain('ILLUSTRATIVE ROADMAP');
     expect(page).toContain('Illustrative three-stage example—not the live onchain project.');
     expect(page).toContain('VERIFY THE LIVE RUN');
+    expect(page).toContain('sponsor approve this exact unmerged commit');
     expect(page).toContain('verification.json');
     expect(page).toContain('https://github.com/Demigodd00/milestonebond');
   });

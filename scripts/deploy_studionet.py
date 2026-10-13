@@ -20,9 +20,8 @@ from genlayer_py.types import TransactionHashVariant, TransactionStatus
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "contracts" / "milestone_bond.py"
-JOURNAL = ROOT / "deployments" / "pending.json"
-RECORD = ROOT / "deployments" / "studionet.json"
-PUBLIC = ROOT / "public" / "deployment.json"
+JOURNAL = ROOT / "deployments" / "pending_v0.3.json"
+RECORD = ROOT / "deployments" / "studionet_v0.3.json"
 
 
 def hash_source(source: str) -> str:
@@ -60,16 +59,14 @@ def main() -> None:
     if hash_source(deployed) != hash_source(source):
         raise RuntimeError("Onchain source differs from local release")
     config = client.read_contract(address=address, function_name="get_config", args=[], account=account, transaction_hash_variant=TransactionHashVariant.LATEST_FINAL)
-    if not isinstance(config, dict) or config.get("version") != "milestonebond.v0.2" or config.get("challenge_seconds") != 600 or config.get("fee_bps") != 0:
+    if not isinstance(config, dict) or config.get("version") != "milestonebond.v0.3" or config.get("delivery_policy") != "SPONSOR_APPROVED_UNMERGED_COMMIT" or config.get("challenge_seconds") != 600 or config.get("fee_bps") != 0:
         raise RuntimeError("Onchain config differs from local release")
-    record = {"contract": "MilestoneBond", "version": "milestonebond.v0.2", "network": "studionet", "chain_id": 61999,
+    record = {"contract": "MilestoneBond", "version": "milestonebond.v0.3", "network": "studionet", "chain_id": 61999,
               "address": address, "transaction_hash": str(tx), "deployer": account.address,
               "signer_mode": "disposable_deployment_only", "source_sha256": hash_source(source),
               "runner_dependency": source.splitlines()[0], "receipt_status": "FINALIZED", "execution_result": "SUCCESS",
               "verified_source_and_config": True, "deployed_config": config, "deployed_at": datetime.now(timezone.utc).isoformat()}
     RECORD.write_text(json.dumps(record, indent=2) + "\n", encoding="utf-8")
-    PUBLIC.write_text(json.dumps({"verified": True, "address": address, "chainId": 61999, "sourceSha256": record["source_sha256"],
-                                  "version": record["version"], "network": "studionet"}, indent=2) + "\n", encoding="utf-8")
     JOURNAL.unlink()
     print(f"verified_contract={address}", flush=True)
 
