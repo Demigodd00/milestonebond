@@ -13,6 +13,7 @@ jobs:
           python-version: '3.12'
       - run: python -m pip install -r requirements-dev.txt
       - run: genvm-lint check contracts/milestone_bond.py --json
+      - run: genvm-lint check contracts/milestone_bond_v0_4.py --json
       - run: python scripts/cache_runner.py
       - run: pytest tests/direct -q
   frontend:

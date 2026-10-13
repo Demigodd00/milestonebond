@@ -27,6 +27,7 @@ Use Python 3.12, Node 24 and pnpm 11:
 ```sh
 python -m pip install -r requirements-dev.txt
 genvm-lint check contracts/milestone_bond_v0_4.py --json
+genvm-lint check contracts/milestone_bond.py --json
 python scripts/cache_runner.py
 pytest tests/direct -q
 pnpm install --frozen-lockfile
