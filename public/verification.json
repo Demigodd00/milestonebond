@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-10-13T04:11:27.588431+00:00",
+  "generated_at": "2026-10-13T08:07:24.404697+00:00",
   "network": "StudioNet",
   "chain_id": 61999,
-  "scope": "Public sandbox execution with simulated GEN; not a security audit or real-value payout proof",
+  "scope": "Simulated-GEN reserve funding, escrow refund, one-time reserve release and two reconciled native payouts; not a live uncredited-child test or production insurance",
   "repository": "https://github.com/Demigodd00/milestonebond",
   "app_url": "https://demigodd00.github.io/milestonebond/",
-  "contract": "0xa3Cb18a9846a49aF882Cae38fB79923D7F6DcC34",
-  "contract_url": "https://explorer-studio.genlayer.com/contracts/0xa3Cb18a9846a49aF882Cae38fB79923D7F6DcC34",
-  "deployment_hash": "0x0f83ef509e1be6ea65b2cdf969c53fc667958254cfff4d3da079382c661cfe9e",
-  "source_sha256": "ad7bc1b8248240c5b3fd088be4fc69f4c90688d3d2680dc08fa0bfb3c54da047",
+  "contract": "0x9218b57964ae4eBe9c9756bb48b3454a03Ce707D",
+  "contract_url": "https://explorer-studio.genlayer.com/contracts/0x9218b57964ae4eBe9c9756bb48b3454a03Ce707D",
+  "deployment_hash": "0x06274fe53d6e6bc33409a6b1fe28a019446a1bb905a706de63f7e2182b3d18ea",
+  "source_sha256": "e00bc5735a3e5f94e275283fef70d884ca815b0055e9c42d553e13b3e54c1ddc",
   "source_verified": true,
   "config": {
     "admin": null,
@@ -19,324 +19,167 @@
     "max_milestones": 4,
     "max_revisions_per_milestone": 2,
     "network_scope": "testnet-only",
-    "version": "milestonebond.v0.3"
+    "reserve_policy": "SPONSOR_FUNDS_100_PERCENT_OF_MILESTONE_BUDGET_REFUND_UNUSED_AFTER_CLAIMS",
+    "version": "milestonebond.v0.4"
   },
-  "project_id": "MB-LIVE-002",
-  "project_status": "COMPLETE",
-  "issue_url": "https://github.com/Demigodd00/milestonebond/issues/1",
-  "author": "0xc61438037047f3cc7ca519b069e0ae124dde637c",
-  "author_github_login": "Demigodd00",
-  "author_github_id": 121986266,
-  "sponsor": "0x0bcbcde568096ea2c93e71d5f33acd45be00590e",
-  "stages": [
-    {
-      "index": 0,
-      "status": "ACCEPTED",
-      "amount_atto": "1000000000000000",
-      "pr_url": "https://github.com/Demigodd00/milestonebond/pull/2",
-      "head_sha": "83b5c6d7b6170a6431635ce45aeb25376c5d66c4",
-      "ci_run_id": 38197462942,
-      "ci_attempt": 2,
-      "ci_url": "https://github.com/Demigodd00/milestonebond/actions/runs/38197462942/attempts/2",
-      "evidence_sha256": "c4d4d4c42d0076c510aa5503460dfca61679f4bc33b5485fd38a38e030844d67",
-      "sponsor_approved_at": 1791862831,
-      "outcome": "ACCEPTED",
-      "checks": [
-        {
-          "id": "C1",
-          "quote": "if key in orders:\n        return orders[key]",
-          "reason": "AFTER implements idempotent lookup for any key (including nonempty) by returning stored record instead of new sequence",
-          "status": "SUPPORTED"
-        }
-      ],
-      "finalized_at": 1791863515
-    },
-    {
-      "index": 1,
-      "status": "ACCEPTED",
-      "amount_atto": "1000000000000000",
-      "pr_url": "https://github.com/Demigodd00/milestonebond/pull/3",
-      "head_sha": "f616f7e404d61a85e75513438172d0cf31089209",
-      "ci_run_id": 38198377989,
-      "ci_attempt": 2,
-      "ci_url": "https://github.com/Demigodd00/milestonebond/actions/runs/38198377989/attempts/2",
-      "evidence_sha256": "d1ac8f0e7dd9093affd2fdd67007f43e337bec152b0ef16c5a5bb839d99532eb",
-      "sponsor_approved_at": 1791863696,
-      "outcome": "ACCEPTED",
-      "checks": [
-        {
-          "id": "C1",
-          "quote": "if not key:\n        raise ValueError(\"key required\")\n    if key in orders:\n        return orders[key]",
-          "reason": "The after source explicitly raises ValueError for an empty key, and it preserves idempotency for repeated nonempty keys by returning the existing record when the key is already present.",
-          "status": "SUPPORTED"
-        }
-      ],
-      "finalized_at": 1791864382
-    }
-  ],
+  "project_id": "MB-RESERVE-001",
+  "project": {
+    "accept_by": 1791878480,
+    "accepted_at": 0,
+    "author": "0xc61438037047f3cc7ca519b069e0ae124dde637c",
+    "author_github_id": 121986266,
+    "author_github_login": "Demigodd00",
+    "base_sha": "94d80d7b2eab03baff1c65b55216aa31eb98f652",
+    "claims_outstanding": "0",
+    "created_at": 1791877836,
+    "current": 0,
+    "id": "MB-RESERVE-001",
+    "issue_body": "StudioNet MilestoneBond demonstration. Stage 1: modify examples/order_service.py so repeated calls with the same nonempty key return the same order record (idempotency). Stage 2: reject an empty key with ValueError while preserving Stage 1 idempotency. Each stage must be a single direct-child commit, with a same-repository PR and a successful pinned push CI run. This is a public test fixture using simulated GEN, not a production bounty. The CI workflow is a smoke test; GenLayer validators separately assess the source against each frozen criterion.",
+    "issue_number": 1,
+    "issue_sha256": "623020dff6c8e6969e81f5683fdea938d29cc810726b31afd92f756f97d39bb9",
+    "milestones": [
+      {
+        "allowed_paths": [
+          "examples/order_service.py"
+        ],
+        "amount": "1000000000000000",
+        "challenge_until": 0,
+        "criteria": [
+          "Repeated calls with the same nonempty key return the same order record, not a newly numbered order."
+        ],
+        "due_at": 1791964230,
+        "index": 0,
+        "opened_at": 0,
+        "recipient": "0x0bcbcde568096ea2c93e71d5f33acd45be00590e",
+        "reviews": [],
+        "revision": 0,
+        "settled_at": 1791878521,
+        "status": "REFUNDED",
+        "title": "Idempotent order creation"
+      },
+      {
+        "allowed_paths": [
+          "examples/order_service.py"
+        ],
+        "amount": "1000000000000000",
+        "challenge_until": 0,
+        "criteria": [
+          "An empty key raises ValueError while repeated nonempty keys still return their original order record."
+        ],
+        "due_at": 1792050630,
+        "index": 1,
+        "opened_at": 0,
+        "recipient": "",
+        "reviews": [],
+        "revision": 0,
+        "settled_at": 0,
+        "status": "LOCKED",
+        "title": "Reject empty keys"
+      }
+    ],
+    "remaining": "0",
+    "repo": "Demigodd00/milestonebond",
+    "repository_id": 1414972094,
+    "required_job": "acceptance",
+    "reserve_consumed": "0",
+    "reserve_initial": "2000000000000000",
+    "reserve_released": true,
+    "reserve_remaining": "0",
+    "sponsor": "0x0bcbcde568096ea2c93e71d5f33acd45be00590e",
+    "status": "REFUNDED",
+    "title": "Reserve-backed project expiration fixture",
+    "workflow_bytes": 414,
+    "workflow_id": 381723182,
+    "workflow_path": ".github/workflows/demo-ci.yml",
+    "workflow_sha256": "4547736e52e9f094a9308f6dca3e1be8a45f551d3ba72a4c62ac04e6c69febe1"
+  },
+  "project_accounting": {
+    "claimable": "0",
+    "claims_outstanding": "0",
+    "reserve_consumed": "0",
+    "reserve_initial": "2000000000000000",
+    "reserve_released": true,
+    "reserve_remaining": "0"
+  },
   "accounting": {
     "claimable": "0",
     "contract_balance": "0",
     "credited": "0",
-    "deposited": "2000000000000000",
+    "deposited": "4000000000000000",
     "locked": "0",
     "pending_out": "0",
     "pending_withdrawal": null,
     "recovery_topups": "0",
-    "withdrawn": "2000000000000000"
+    "reserve_consumed": "0",
+    "reserve_locked": "0",
+    "withdrawn": "4000000000000000"
   },
   "transactions": [
     {
       "method": "create_project",
-      "role": "sponsor",
-      "hash": "0xb20652378284e61d443c670bd15307253a0cd8d1e00d3bd742b9b8d78a183881",
-      "url": "https://explorer-studio.genlayer.com/transactions/0xb20652378284e61d443c670bd15307253a0cd8d1e00d3bd742b9b8d78a183881",
+      "hash": "0xf5c4427ca68d610325a7c558719fb0d957dfc108a6607a9cca37c1e072f93adb",
+      "url": "https://explorer-studio.genlayer.com/transactions/0xf5c4427ca68d610325a7c558719fb0d957dfc108a6607a9cca37c1e072f93adb",
       "status": "FINALIZED",
-      "execution_success": true,
-      "expected_failure": false,
-      "error": null,
-      "validator_votes": {
-        "0x4EDbE1FC9EAeC7b0EBA849b0C76AE73Eb0ad5C47": "agree",
-        "0x6737ca1d6BDF8b7C4f19143E2D55581Ca64eb7C3": "agree",
-        "0xDB1c35c1f05d885999b8f13e5735307BcC16Be88": "idle",
-        "0xE6BD8050758CB15fC88387223E31Ae2708B119dC": "agree",
-        "0xacc2459F341D7a887bcA8FAA62F1EC9378d4Bc67": "idle"
-      }
+      "execution_success": true
     },
     {
-      "method": "accept_project",
-      "role": "author",
-      "hash": "0xfc9909492c301fce520b02dcfbd67dc259ea66966380a2dbe157fa451eb6bd9c",
-      "url": "https://explorer-studio.genlayer.com/transactions/0xfc9909492c301fce520b02dcfbd67dc259ea66966380a2dbe157fa451eb6bd9c",
+      "method": "recover_expired",
+      "hash": "0xe6cd0d0c2b9a0a904d1884c33207716fb41f6a1ab869d3cbb1cec642ada51004",
+      "url": "https://explorer-studio.genlayer.com/transactions/0xe6cd0d0c2b9a0a904d1884c33207716fb41f6a1ab869d3cbb1cec642ada51004",
       "status": "FINALIZED",
-      "execution_success": true,
-      "expected_failure": false,
-      "error": null,
-      "validator_votes": {
-        "0x03D58A4DeF6fDFc032A56374785a5F571D07Bc11": "agree",
-        "0x36728d2a123aB444E603EE5b2ad17d18Bb193557": "idle",
-        "0x3E5ee2507cc167C9925Bf10c67D7986581112024": "idle",
-        "0x4aba638Cf0Cf5249437AaD968fC69dde46ae6BAC": "agree",
-        "0x9ea87b28DcA2F79fe108CF06a4c13B4c876AC23d": "agree"
-      }
-    },
-    {
-      "method": "submit_milestone",
-      "role": "author",
-      "hash": "0xa929e57d3b99b285b6ba9b6d6422a8efd9704b2741e9474c076d2a6a7150eae5",
-      "url": "https://explorer-studio.genlayer.com/transactions/0xa929e57d3b99b285b6ba9b6d6422a8efd9704b2741e9474c076d2a6a7150eae5",
-      "status": "FINALIZED",
-      "execution_success": true,
-      "expected_failure": false,
-      "error": null,
-      "validator_votes": {
-        "0x03D58A4DeF6fDFc032A56374785a5F571D07Bc11": "idle",
-        "0x14402D49f317CE1a2F35BAE01b1804A2A9703dCb": "agree",
-        "0x36728d2a123aB444E603EE5b2ad17d18Bb193557": "idle",
-        "0x90402341F0B0e97b23023c0a87de957FB7148E0F": "agree",
-        "0x9ea87b28DcA2F79fe108CF06a4c13B4c876AC23d": "agree"
-      }
-    },
-    {
-      "method": "approve_submission",
-      "role": "sponsor",
-      "hash": "0xe2eb8704890bc8a2fc40445c09d8cf59b9bcf922e2f65961470c93d88d144bd4",
-      "url": "https://explorer-studio.genlayer.com/transactions/0xe2eb8704890bc8a2fc40445c09d8cf59b9bcf922e2f65961470c93d88d144bd4",
-      "status": "FINALIZED",
-      "execution_success": true,
-      "expected_failure": false,
-      "error": null,
-      "validator_votes": {
-        "0x36728d2a123aB444E603EE5b2ad17d18Bb193557": "agree",
-        "0x3D83ab507785b95ca5C208bEc80CCe3D5ca98100": "agree",
-        "0x6737ca1d6BDF8b7C4f19143E2D55581Ca64eb7C3": "agree",
-        "0xE6BD8050758CB15fC88387223E31Ae2708B119dC": "agree",
-        "0xec2Fb79cd12255Eb34886CEd7332f27B98DEe658": "agree"
-      }
-    },
-    {
-      "method": "review_milestone",
-      "role": "sponsor",
-      "hash": "0x3e27b4a6b6ac2611ebee04429589cd30f52e5457eead35a20acb8614f62a7a76",
-      "url": "https://explorer-studio.genlayer.com/transactions/0x3e27b4a6b6ac2611ebee04429589cd30f52e5457eead35a20acb8614f62a7a76",
-      "status": "FINALIZED",
-      "execution_success": true,
-      "expected_failure": false,
-      "error": null,
-      "validator_votes": {
-        "0x36728d2a123aB444E603EE5b2ad17d18Bb193557": "agree",
-        "0x5310dcF075E0BD47d29B8ec6581F736C767f54D2": "agree",
-        "0x772ffCd1dF6Cc566eC4b8d3f4F4f8eBbb6B36C84": "agree",
-        "0xE6BD8050758CB15fC88387223E31Ae2708B119dC": "idle",
-        "0xec2Fb79cd12255Eb34886CEd7332f27B98DEe658": "idle"
-      }
-    },
-    {
-      "method": "finalize_milestone",
-      "role": "sponsor",
-      "hash": "0x741ffdac77dbc73bf501418673542c28394ee5f4c48ce8a54f19d630c35ccdf4",
-      "url": "https://explorer-studio.genlayer.com/transactions/0x741ffdac77dbc73bf501418673542c28394ee5f4c48ce8a54f19d630c35ccdf4",
-      "status": "FINALIZED",
-      "execution_success": true,
-      "expected_failure": false,
-      "error": null,
-      "validator_votes": {
-        "0x36728d2a123aB444E603EE5b2ad17d18Bb193557": "agree",
-        "0x3E5ee2507cc167C9925Bf10c67D7986581112024": "agree",
-        "0x4aba638Cf0Cf5249437AaD968fC69dde46ae6BAC": "agree",
-        "0x5310dcF075E0BD47d29B8ec6581F736C767f54D2": "agree",
-        "0x90402341F0B0e97b23023c0a87de957FB7148E0F": "agree"
-      }
-    },
-    {
-      "method": "submit_milestone",
-      "role": "author",
-      "hash": "0x673a062b9358553abd1d557c46e78da1e2932318da8551a9172469464d696318",
-      "url": "https://explorer-studio.genlayer.com/transactions/0x673a062b9358553abd1d557c46e78da1e2932318da8551a9172469464d696318",
-      "status": "FINALIZED",
-      "execution_success": true,
-      "expected_failure": false,
-      "error": null,
-      "validator_votes": {
-        "0x3D83ab507785b95ca5C208bEc80CCe3D5ca98100": "agree",
-        "0x772ffCd1dF6Cc566eC4b8d3f4F4f8eBbb6B36C84": "idle",
-        "0x9ea87b28DcA2F79fe108CF06a4c13B4c876AC23d": "idle",
-        "0xBBb165E4c9d73a1493D363280f7067Cd07891dBE": "agree",
-        "0xacc2459F341D7a887bcA8FAA62F1EC9378d4Bc67": "agree"
-      }
-    },
-    {
-      "method": "review_milestone",
-      "role": "sponsor",
-      "hash": "0xd1c88b2c056618f8f3a6171541bbf8f50905250b4a5876ee31c98cf119661160",
-      "url": "https://explorer-studio.genlayer.com/transactions/0xd1c88b2c056618f8f3a6171541bbf8f50905250b4a5876ee31c98cf119661160",
-      "status": "FINALIZED",
-      "execution_success": false,
-      "expected_failure": true,
-      "error": "[EXPECTED] Sponsor has not approved exact delivery",
-      "validator_votes": {
-        "0x14402D49f317CE1a2F35BAE01b1804A2A9703dCb": "agree",
-        "0x36728d2a123aB444E603EE5b2ad17d18Bb193557": "idle",
-        "0x3D83ab507785b95ca5C208bEc80CCe3D5ca98100": "agree",
-        "0x6737ca1d6BDF8b7C4f19143E2D55581Ca64eb7C3": "agree",
-        "0xec2Fb79cd12255Eb34886CEd7332f27B98DEe658": "idle"
-      }
-    },
-    {
-      "method": "approve_submission",
-      "role": "sponsor",
-      "hash": "0x11e74569502749005610b631e4e0dcd3e014d377412df840018ce57897aa4969",
-      "url": "https://explorer-studio.genlayer.com/transactions/0x11e74569502749005610b631e4e0dcd3e014d377412df840018ce57897aa4969",
-      "status": "FINALIZED",
-      "execution_success": true,
-      "expected_failure": false,
-      "error": null,
-      "validator_votes": {
-        "0x03D58A4DeF6fDFc032A56374785a5F571D07Bc11": "agree",
-        "0x3E5ee2507cc167C9925Bf10c67D7986581112024": "idle",
-        "0x4404Fb70d490c935758146f42A73DC850FF95C71": "agree",
-        "0xacc2459F341D7a887bcA8FAA62F1EC9378d4Bc67": "idle",
-        "0xcE1d6bBB36B744536153966B4DD42276f5ADd0F8": "agree"
-      }
-    },
-    {
-      "method": "review_milestone",
-      "role": "sponsor",
-      "hash": "0x4624fc0c274e0089b8757295c0f89c4528d6d8f72dffcd58b8c43cbcb1968e99",
-      "url": "https://explorer-studio.genlayer.com/transactions/0x4624fc0c274e0089b8757295c0f89c4528d6d8f72dffcd58b8c43cbcb1968e99",
-      "status": "FINALIZED",
-      "execution_success": true,
-      "expected_failure": false,
-      "error": null,
-      "validator_votes": {
-        "0x36728d2a123aB444E603EE5b2ad17d18Bb193557": "agree",
-        "0x76c25AFC12c75485703cCFfd0083AA6201455B25": "idle",
-        "0x772ffCd1dF6Cc566eC4b8d3f4F4f8eBbb6B36C84": "agree",
-        "0xBBb165E4c9d73a1493D363280f7067Cd07891dBE": "agree",
-        "0xE6BD8050758CB15fC88387223E31Ae2708B119dC": "idle"
-      }
-    },
-    {
-      "method": "finalize_milestone",
-      "role": "sponsor",
-      "hash": "0xd8900d7a74d0c51e5e5d3b82dc57820e7c17d395a08c4819d21bd23b63f2db13",
-      "url": "https://explorer-studio.genlayer.com/transactions/0xd8900d7a74d0c51e5e5d3b82dc57820e7c17d395a08c4819d21bd23b63f2db13",
-      "status": "FINALIZED",
-      "execution_success": true,
-      "expected_failure": false,
-      "error": null,
-      "validator_votes": {
-        "0x14402D49f317CE1a2F35BAE01b1804A2A9703dCb": "agree",
-        "0x4EDbE1FC9EAeC7b0EBA849b0C76AE73Eb0ad5C47": "agree",
-        "0x5310dcF075E0BD47d29B8ec6581F736C767f54D2": "agree",
-        "0xE6BD8050758CB15fC88387223E31Ae2708B119dC": "agree",
-        "0xcE1d6bBB36B744536153966B4DD42276f5ADd0F8": "agree"
-      }
+      "execution_success": true
     },
     {
       "method": "withdraw",
-      "role": "author",
-      "hash": "0x2eb73e68d42db8fc74a2f5e44372f0dd86da65a5d23d6ceeffb88c96ac6faac6",
-      "url": "https://explorer-studio.genlayer.com/transactions/0x2eb73e68d42db8fc74a2f5e44372f0dd86da65a5d23d6ceeffb88c96ac6faac6",
+      "hash": "0x4847157a3c1a2951142b2c72ad29c7c95defdff9e7d87b311c0d6d1cf82693bd",
+      "url": "https://explorer-studio.genlayer.com/transactions/0x4847157a3c1a2951142b2c72ad29c7c95defdff9e7d87b311c0d6d1cf82693bd",
       "status": "FINALIZED",
       "execution_success": true,
-      "expected_failure": false,
-      "error": null,
-      "validator_votes": {
-        "0x5310dcF075E0BD47d29B8ec6581F736C767f54D2": "agree",
-        "0x6737ca1d6BDF8b7C4f19143E2D55581Ca64eb7C3": "agree",
-        "0x90402341F0B0e97b23023c0a87de957FB7148E0F": "agree",
-        "0xBBb165E4c9d73a1493D363280f7067Cd07891dBE": "agree",
-        "0xcE1d6bBB36B744536153966B4DD42276f5ADd0F8": "agree"
+      "child": {
+        "hash": "0x0056b3871001874804ca47cfacabde4d9eeb550a187c3c16ff7a6d9eda80a848",
+        "url": "https://explorer-studio.genlayer.com/transactions/0x0056b3871001874804ca47cfacabde4d9eeb550a187c3c16ff7a6d9eda80a848",
+        "value_atto": "2000000000000000",
+        "value_credited": true
       }
     },
     {
       "method": "reconcile_withdrawal",
-      "role": "sponsor",
-      "hash": "0x266314bedf989710d5412a7b807a2eb716947dc7d7fbe4f91bf30349e55ea726",
-      "url": "https://explorer-studio.genlayer.com/transactions/0x266314bedf989710d5412a7b807a2eb716947dc7d7fbe4f91bf30349e55ea726",
+      "hash": "0xd096eb857a96dc43947d2fb77a14e3e42ac4661631fbd0c82c6a4ca24f03a83c",
+      "url": "https://explorer-studio.genlayer.com/transactions/0xd096eb857a96dc43947d2fb77a14e3e42ac4661631fbd0c82c6a4ca24f03a83c",
       "status": "FINALIZED",
-      "execution_success": false,
-      "expected_failure": true,
-      "error": "[EXPECTED] Withdrawal parent mismatch",
-      "validator_votes": {
-        "0x4404Fb70d490c935758146f42A73DC850FF95C71": "agree",
-        "0x4EDbE1FC9EAeC7b0EBA849b0C76AE73Eb0ad5C47": "agree",
-        "0x5310dcF075E0BD47d29B8ec6581F736C767f54D2": "agree",
-        "0x9ea87b28DcA2F79fe108CF06a4c13B4c876AC23d": "idle",
-        "0xE6BD8050758CB15fC88387223E31Ae2708B119dC": "idle"
+      "execution_success": true
+    },
+    {
+      "method": "release_reserve",
+      "hash": "0x1fb4ce4c73b08a046a81a75d090a4653bc345dcf7f05af5a55fcae5973de04f9",
+      "url": "https://explorer-studio.genlayer.com/transactions/0x1fb4ce4c73b08a046a81a75d090a4653bc345dcf7f05af5a55fcae5973de04f9",
+      "status": "FINALIZED",
+      "execution_success": true
+    },
+    {
+      "method": "withdraw",
+      "hash": "0xc3a2c97619454dbf7c7112b48d36a944f4a6aa3c84a68d57920069f4ddf44698",
+      "url": "https://explorer-studio.genlayer.com/transactions/0xc3a2c97619454dbf7c7112b48d36a944f4a6aa3c84a68d57920069f4ddf44698",
+      "status": "FINALIZED",
+      "execution_success": true,
+      "child": {
+        "hash": "0x8277ce3ad50981cceb1897b7783ad8807dc51f6c1def41e42c8b6918b236b975",
+        "url": "https://explorer-studio.genlayer.com/transactions/0x8277ce3ad50981cceb1897b7783ad8807dc51f6c1def41e42c8b6918b236b975",
+        "value_atto": "2000000000000000",
+        "value_credited": true
       }
     },
     {
       "method": "reconcile_withdrawal",
-      "role": "sponsor",
-      "hash": "0x09c68d91a3800464fec4cdf55d2384c92cc805f0044e31ce04d6d8f81baa9c6a",
-      "url": "https://explorer-studio.genlayer.com/transactions/0x09c68d91a3800464fec4cdf55d2384c92cc805f0044e31ce04d6d8f81baa9c6a",
+      "hash": "0xb2944c56b255ee0b1ecb666a0e930215f77c69e46e34709e7b3dae1cb85ffd08",
+      "url": "https://explorer-studio.genlayer.com/transactions/0xb2944c56b255ee0b1ecb666a0e930215f77c69e46e34709e7b3dae1cb85ffd08",
       "status": "FINALIZED",
-      "execution_success": true,
-      "expected_failure": false,
-      "error": null,
-      "validator_votes": {
-        "0x36728d2a123aB444E603EE5b2ad17d18Bb193557": "agree",
-        "0x3D83ab507785b95ca5C208bEc80CCe3D5ca98100": "agree",
-        "0x772ffCd1dF6Cc566eC4b8d3f4F4f8eBbb6B36C84": "idle",
-        "0xDB1c35c1f05d885999b8f13e5735307BcC16Be88": "idle",
-        "0xcE1d6bBB36B744536153966B4DD42276f5ADd0F8": "agree"
-      }
+      "execution_success": true
     }
   ],
-  "outbound_transfer": {
-    "hash": "0xf8d01660e706e44d976cedc5c612156d8dd3a6f0307ff802aa3ab6e67f6c14bc",
-    "url": "https://explorer-studio.genlayer.com/transactions/0xf8d01660e706e44d976cedc5c612156d8dd3a6f0307ff802aa3ab6e67f6c14bc",
-    "parent": "0x2eb73e68d42db8fc74a2f5e44372f0dd86da65a5d23d6ceeffb88c96ac6faac6",
-    "to": "0xc61438037047f3cc7ca519b069e0ae124dde637c",
-    "value_atto": "2000000000000000",
-    "value_credited": true
-  },
   "limitations": [
-    "Direct adversarial tests use mocked public evidence and receipts; listed StudioNet receipts are the live execution evidence.",
-    "The delivery policy is a sponsor-approved unmerged commit, not proof of merge or independent human identity.",
-    "GitHub, CI and StudioNet RPC remain external trust dependencies; this happy-path transfer does not simulate a failed protocol child.",
-    "Ambiguous transfers remain pending; recovery after a finalized failed child requires real balance coverage, possibly via a donor top-up."
+    "No external value_credited=false child was induced on StudioNet",
+    "Reserve covers only finite losses up to its funded amount",
+    "Sponsor reserve refund withdrawal has no additional insurance layer"
   ]
 }

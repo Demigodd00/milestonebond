@@ -1,5 +1,11 @@
 # StudioNet deployment and verification
 
+## v0.4 sponsor-funded reserve
+
+The immutable v0.4 source is [milestone_bond_v0_4.py](../contracts/milestone_bond_v0_4.py), and its deployed address, pinned GenVM runner, source hash and deployment receipt are in [studionet_v0.4.json](../deployments/studionet_v0.4.json). Run `genvm-lint check contracts/milestone_bond_v0_4.py --json`, `pytest tests/direct -q`, `pnpm test` and `pnpm build` before publishing. The live fixture is journaled locally by `python scripts/demo_reserve_v04.py fund` and, only after its acceptance deadline, `python scripts/demo_reserve_v04.py settle`. Never resubmit a journaled action without inspecting its finalized hash and state. `python scripts/verify_live_v04.py` reconstructs the exact source, receipt sequence, native children and final balances into [verification.json](../public/verification.json). It does not assert a live `value_credited=false` child. The original v0.3 evidence remains separately in [verification-v0.3.json](../public/verification-v0.3.json).
+
+## Historical v0.3 release
+
 Run `genvm-lint check contracts/milestone_bond.py --json`, `pytest tests/direct -q`, `pnpm test`, and `pnpm build` first. Then run `python scripts/deploy_studionet.py`. The v0.3 script creates a disposable deployment-only account, journals the submitted transaction hash, waits for a finalized **successful execution**, reads back deployed source and `get_config`, and writes `deployments/studionet_v0.3.json`. It does **not** change the frontend deployment pointer until live demonstration and its verification report are complete. No private key is persisted. The previous `deployments/studionet.json` remains v0.2 historical evidence.
 
 If deployment stalls or fails, inspect `deployments/pending_v0.3.json` and its transaction hash before any retry. A finalized transaction may still contain an execution error. Do not delete the journal and redeploy blindly. Source verification is a SHA-256 of normalized line endings; the web app recomputes it before signing.

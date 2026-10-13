@@ -5,7 +5,7 @@ export type Provider={request(args:{method:string;params?:unknown[]}):Promise<un
 export type Session={address:`0x${string}`;provider:Provider};
 export type Deployment={verified:boolean;address:string|null;chainId:number;sourceSha256:string;version:string;network:string};
 export type Pending={hash:`0x${string}`;method:string;projectId:string;address:string;account:string;submittedAt:number};
-export const pendingKey='milestonebond:pending:v0.3:61999';
+export const pendingKey='milestonebond:pending:v0.4:61999';
 const reader=createClient({chain:chains.studionet});
 let inFlight=false;
 const hashPattern=/^0x[0-9a-fA-F]{64}$/;
@@ -21,9 +21,10 @@ export async function read<T>(d:Deployment,method:string,args:unknown[]=[]):Prom
  return JSON.parse(JSON.stringify(value,(_,v)=>typeof v==='bigint'?v.toString():v)) as T;
 }
 export async function verifyDeployment(d:Deployment){
- if(!d.verified||!/^0x[0-9a-fA-F]{40}$/.test(d.address||'')||d.chainId!==61999||d.network!=='studionet'||d.version!=='milestonebond.v0.3'||!/^([0-9a-f]{64})$/.test(d.sourceSha256))throw Error('Live signing is disabled until the StudioNet contract is verified.');
- const config=await read<{version:string;challenge_seconds:number;fee_bps:number;delivery_policy:string}>(d,'get_config');
+ if(!d.verified||!/^0x[0-9a-fA-F]{40}$/.test(d.address||'')||d.chainId!==61999||d.network!=='studionet'||!['milestonebond.v0.3','milestonebond.v0.4'].includes(d.version)||!/^([0-9a-f]{64})$/.test(d.sourceSha256))throw Error('Live signing is disabled until the StudioNet contract is verified.');
+ const config=await read<{version:string;challenge_seconds:number;fee_bps:number;delivery_policy:string;reserve_policy?:string}>(d,'get_config');
  if(config.version!==d.version||config.delivery_policy!=='SPONSOR_APPROVED_UNMERGED_COMMIT'||Number(config.challenge_seconds)!==600||Number(config.fee_bps)!==0)throw Error('Onchain policy differs from this release.');
+ if(d.version==='milestonebond.v0.4'&&config.reserve_policy!=='SPONSOR_FUNDS_100_PERCENT_OF_MILESTONE_BUDGET_REFUND_UNUSED_AFTER_CLAIMS')throw Error('Onchain reserve policy differs from this release.');
  const code=await reader.getContractCode(d.address as `0x${string}`);
  const bytes=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(code.replaceAll('\r\n','\n')));
  const digest=[...new Uint8Array(bytes)].map(b=>b.toString(16).padStart(2,'0')).join('');
@@ -69,7 +70,7 @@ export async function poll(p:Pending){
  return result;
 }
 export async function send(d:Deployment,s:Session,method:string,args:unknown[],value:bigint,onHash:(p:Pending)=>void){
- const arities:Record<string,number>={create_project:1,accept_project:1,submit_milestone:5,approve_submission:3,review_milestone:2,challenge_review:3,finalize_milestone:1,recover_expired:1,withdraw:1,reconcile_withdrawal:1,top_up_recovery:0};
+ const arities:Record<string,number>={create_project:1,accept_project:1,submit_milestone:5,approve_submission:3,review_milestone:2,challenge_review:3,finalize_milestone:1,recover_expired:1,withdraw:d.version==='milestonebond.v0.4'?2:1,reconcile_withdrawal:1,top_up_recovery:0,...(d.version==='milestonebond.v0.4'?{release_reserve:1}:{})};
  if(!(method in arities)||args.length!==arities[method]||(!['create_project','top_up_recovery'].includes(method)&&value!==0n))throw Error('Invalid contract action.');
  if(!navigator.locks)throw Error('A current browser with Web Locks is required for safe signing.');
  return navigator.locks.request('milestonebond:sign:61999',{ifAvailable:true},async lock=>{

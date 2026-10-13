@@ -15,11 +15,11 @@ function EvidenceLink({href,children}:{href:string;children:React.ReactNode}) {
   return <a href={href} target="_blank" rel="noopener noreferrer">{children}<span aria-hidden="true">↗</span></a>;
 }
 
-export default function ProofPanel({liveStatus,readReady}:{liveStatus?:string;readReady:boolean}) {
+export default function ProofPanel() {
   return <section id="proof" className="proof-section" aria-labelledby="proof-title">
     <div className="proof-heading">
-      <div><span className="section-kicker">VERIFY THE LIVE RUN</span><h2 id="proof-title">Two approved stages. One reconciled payout.</h2></div>
-      <span className="proof-state">{liveStatus ? `Latest onchain read: ${liveStatus.replaceAll('_',' ')}` : readReady ? 'No current onchain demo; archived record only' : 'Live state: loading or unavailable'}</span>
+      <div><span className="section-kicker">VERIFIED V0.3 RUN</span><h2 id="proof-title">Two approved stages. One reconciled payout.</h2></div>
+      <span className="proof-state">Archived v0.3 record; separate contract</span>
     </div>
     <p className="proof-intro">The walkthrough is illustrative. This is the separate v0.3 StudioNet record for MB-LIVE-002: both unmerged commits were claimed by the assigned wallet, approved by the sponsor, reviewed by validators, and finally settled. A wrong-parent reconciliation failed before the exact linked native transfer was reconciled. This is simulated GEN, not production escrow.</p>
     <div className="proof-steps">
@@ -27,6 +27,6 @@ export default function ProofPanel({liveStatus,readReady}:{liveStatus?:string;re
       <article><span>02 / CONSENSUS</span><h3>Approval gate enforced</h3><p>Stage two first tried review without sponsor approval and finalized with an execution error. Only the later exact-hash approval unlocked validator review and eventual finalization.</p><div className="proof-links"><EvidenceLink href={`${explorer}/transactions/${stageOneReview}`}>Stage 1 receipt</EvidenceLink><EvidenceLink href={`${explorer}/transactions/${stageTwoRejected}`}>Premature review rejected</EvidenceLink><EvidenceLink href={`${explorer}/transactions/${stageTwoApproval}`}>Sponsor approval</EvidenceLink><EvidenceLink href={`${explorer}/transactions/${stageTwoReview}`}>Stage 2 receipt</EvidenceLink><EvidenceLink href={`${explorer}/transactions/${stageTwoFinal}`}>Stage 2 finalization</EvidenceLink></div></article>
       <article><span>03 / SETTLEMENT</span><h3>Native transfer reconciled</h3><p>The 0.002 test-GEN withdrawal stayed pending until its exact child finalized with <code>value_credited=true</code>. A wrong-parent attempt failed and did not clear the entitlement; the correct reconciliation recorded the payout once.</p><div className="proof-links"><EvidenceLink href={`${explorer}/transactions/${withdrawal}`}>Withdrawal receipt</EvidenceLink><EvidenceLink href={`${explorer}/transactions/${transfer}`}>Transfer receipt</EvidenceLink><EvidenceLink href={`${explorer}/transactions/${wrongParent}`}>Wrong parent rejected</EvidenceLink><EvidenceLink href={`${explorer}/transactions/${reconciliation}`}>Reconciliation receipt</EvidenceLink><EvidenceLink href={`${explorer}/contracts/${contract}`}>v0.3 contract</EvidenceLink></div></article>
     </div>
-    <div className="proof-sourcebar"><div><strong>Audit the full trail</strong><small>The verification JSON is a dated snapshot, not a substitute for current onchain state. StudioNet may reset.</small></div><div className="proof-links"><EvidenceLink href={`${import.meta.env.BASE_URL}verification.json`}>v0.3 verification record</EvidenceLink><EvidenceLink href={`${repo}/blob/main/docs/STEWARD_FIXES_V03.md`}>Steward response</EvidenceLink><EvidenceLink href={`${import.meta.env.BASE_URL}verification-v0.2.json`}>Historical v0.2 record</EvidenceLink><EvidenceLink href={repo}>Source repository</EvidenceLink></div></div>
+    <div className="proof-sourcebar"><div><strong>Audit the full trail</strong><small>The verification JSON is a dated snapshot, not a substitute for current onchain state. StudioNet may reset.</small></div><div className="proof-links"><EvidenceLink href={`${import.meta.env.BASE_URL}verification-v0.3.json`}>v0.3 verification record</EvidenceLink><EvidenceLink href={`${repo}/blob/main/docs/STEWARD_FIXES_V03.md`}>Steward response</EvidenceLink><EvidenceLink href={`${import.meta.env.BASE_URL}verification-v0.2.json`}>Historical v0.2 record</EvidenceLink><EvidenceLink href={repo}>Source repository</EvidenceLink></div></div>
   </section>;
 }

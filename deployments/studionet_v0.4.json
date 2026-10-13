@@ -1,0 +1,28 @@
+{
+  "contract": "MilestoneBond",
+  "version": "milestonebond.v0.4",
+  "network": "studionet",
+  "chain_id": 61999,
+  "address": "0x9218b57964ae4eBe9c9756bb48b3454a03Ce707D",
+  "transaction_hash": "0x06274fe53d6e6bc33409a6b1fe28a019446a1bb905a706de63f7e2182b3d18ea",
+  "deployer": "0xa3d60f199E618D1b11F9aFb132FcB35d20CAf0f1",
+  "signer_mode": "disposable_deployment_only",
+  "source_sha256": "e00bc5735a3e5f94e275283fef70d884ca815b0055e9c42d553e13b3e54c1ddc",
+  "runner_dependency": "# { \"Depends\": \"py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6\" }",
+  "receipt_status": "FINALIZED",
+  "execution_result": "SUCCESS",
+  "verified_source_and_config": true,
+  "deployed_config": {
+    "admin": null,
+    "authority": "github.com",
+    "challenge_seconds": 600,
+    "delivery_policy": "SPONSOR_APPROVED_UNMERGED_COMMIT",
+    "fee_bps": 0,
+    "max_milestones": 4,
+    "max_revisions_per_milestone": 2,
+    "network_scope": "testnet-only",
+    "reserve_policy": "SPONSOR_FUNDS_100_PERCENT_OF_MILESTONE_BUDGET_REFUND_UNUSED_AFTER_CLAIMS",
+    "version": "milestonebond.v0.4"
+  },
+  "deployed_at": "2026-10-13T07:49:20.365408+00:00"
+}

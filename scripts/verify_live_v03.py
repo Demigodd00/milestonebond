@@ -16,7 +16,7 @@ from genlayer_py.types import TransactionHashVariant
 ROOT = Path(__file__).resolve().parents[1]
 DEPLOYMENT = json.loads((ROOT / "deployments" / "studionet_v0.3.json").read_text(encoding="utf-8"))
 JOURNAL = json.loads((ROOT / ".local" / "demo-state-v0.3.json").read_text(encoding="utf-8"))
-OUTPUT = ROOT / "public" / "verification.json"
+OUTPUT = ROOT / "public" / "verification-v0.3.json"
 PROJECT = "MB-LIVE-002"
 
 
