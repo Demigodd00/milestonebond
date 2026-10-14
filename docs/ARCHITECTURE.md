@@ -1,6 +1,19 @@
 # Architecture
 
-## State and payout
+## Current v0.5 reserve and settlement
+
+Bradbury v0.5 receives exactly twice the 2–4 fixed milestone amounts: one
+share funds escrow, and an equal project-specific reserve covers only
+confirmed unreturned withdrawal loss. Unused reserve can be released to its
+sponsor once all project claims settle. A withdrawal creates one pending
+external transfer. Reconciliation independently binds its exact finalized
+GenLayer call and message to the EVM finalization receipt, failure/settlement
+log and real balances. A confirmed rejected transfer restored a claim in the
+[live v0.5 evidence](BRADBURY_V05_RECOVERY.md); it did not consume reserve or
+pay the recipient. Incomplete evidence stays pending. The older StudioNet
+child-receipt path below is historical, not v0.5's settlement mechanism.
+
+## Historical v0.3 state and payout
 
 `create_project` receives a deposit exactly equal to the sum of 2–4 immutable milestone amounts. It fetches the public GitHub repository, issue, base commit and workflow under GenLayer strict equivalence. The contract stores the issue body and its SHA-256, criteria, paths, fixed recipient, deadlines and funding. A project moves through `AWAITING_AUTHOR → ACTIVE → REVIEW_READY → REVIEW_PENDING`. On acceptance, only the current stage amount is credited to the author, the accepted head becomes the next stage base, and the next stage opens. Final acceptance marks `COMPLETE`. Terminal rejection or eligible expiry credits the sponsor only the **unpaid remainder** and marks `REFUNDED`.
 

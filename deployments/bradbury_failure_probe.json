@@ -1,0 +1,36 @@
+{
+  "network": "bradbury",
+  "chain_id": 4221,
+  "probe_address": "0xb485a128E9751f26C25512AD2e6639cF56a950dF",
+  "receiver": "0x9ca51A5097764129F888EfBd7bf373ffde9DEDB4",
+  "transfer_amount": 1000000000000000,
+  "genlayer_transaction_id": "0x105289d3c4a107302a8e743e4e6f3138500c27ee0e79664783e6be2f6e3a57e7",
+  "evm_finalization_hash": "0xf0c645ea06f965436067ab51626769336f56d0c62464096a686c8190cccf786b",
+  "evm_receipt_status": 1,
+  "finalization_block": 25110553,
+  "message": [
+    "0",
+    "0x9ca51A5097764129F888EfBd7bf373ffde9DEDB4",
+    "1000000000000000",
+    "b''",
+    "False",
+    "0"
+  ],
+  "failure_events": [],
+  "exact_failure_event_verified": false,
+  "protocol_failure_logs": [
+    {
+      "source": "0x27872802226532FCd7feA2f00AddBFFbd3380Ade",
+      "topic0": "0x5ae8e754fbc8b7b56c89e264bdcd8bb847036b23ac1a0f791f48b62438f2bab9",
+      "message_hash": "0x7355cfa9ff1f7c929494e148962a1cf3cfbf9f44757b1392ff57980bc0dcd4c5",
+      "log_index": 2
+    }
+  ],
+  "exact_external_failure_verified": true,
+  "balance_before": 0,
+  "balance_after": 1000000000000000,
+  "receiver_balance": 0,
+  "genvm_state": null,
+  "genvm_state_read_error": "Optional SDK state read unavailable: TypeError",
+  "inspected_at": "2026-10-13T18:43:26.718359+00:00"
+}

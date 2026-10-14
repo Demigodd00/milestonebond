@@ -1,0 +1,28 @@
+{
+  "contract": "MilestoneBond",
+  "version": "milestonebond.v0.5",
+  "network": "bradbury",
+  "chain_id": 4221,
+  "address": "0xf7358a08822cbc439a83225b8cf48f21b10468dc",
+  "transaction_id": "0x4274beda3409d76fdf59650ed14dd680ef919695d77501c30fffcd8492ba4124",
+  "deployer": "0x0BCbcDe568096eA2c93E71d5f33aCD45bE00590e",
+  "source_sha256": "208c024ad231bd9ff0b13f43e0f33a9db8e918ed6adee855f9dbf4f2ae219f41",
+  "runner_dependency": "# { \"Depends\": \"py-genlayer:1jb45aa8ynh2a9c9xn3b7qqh8sm5q93hwfp7jqmwsfhh8jpz09h6\" }",
+  "receipt_status": "FINALIZED",
+  "execution_result": "SUCCESS",
+  "verified_source_and_config": true,
+  "deployed_config": {
+    "admin": null,
+    "authority": "github.com",
+    "challenge_seconds": 600,
+    "delivery_policy": "SPONSOR_APPROVED_UNMERGED_COMMIT",
+    "fee_bps": 0,
+    "max_milestones": 4,
+    "max_revisions_per_milestone": 2,
+    "network_scope": "bradbury-testnet-only",
+    "reserve_policy": "SPONSOR_FUNDS_100_PERCENT_OF_MILESTONE_BUDGET_REFUND_UNUSED_AFTER_CLAIMS",
+    "settlement_proof": "GEN_RECEIPT_MESSAGE_AND_EVM_FINALIZATION",
+    "version": "milestonebond.v0.5"
+  },
+  "verified_at": "2026-10-14T00:02:04.476654+00:00"
+}

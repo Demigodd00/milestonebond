@@ -1,0 +1,13 @@
+{
+  "network": "bradbury",
+  "chain_id": 4221,
+  "address": "0x9ca51A5097764129F888EfBd7bf373ffde9DEDB4",
+  "evm_transaction_hash": "0xaf681a59ce5b06d56db25d81da49f94e4e60351c36222cabcc85d959db40cfd8",
+  "deployer": "0x0BCbcDe568096eA2c93E71d5f33aCD45bE00590e",
+  "creation_sha256": "0c525e349b7ae834769662fda88b1a8938c88c99ffba69c087685bb8f2f5d99a",
+  "runtime_hex": "0x60006000fd",
+  "receipt_status": 1,
+  "block_number": 25095309,
+  "gas_used": 54250,
+  "deployed_at": "2026-10-13T16:55:05.237167+00:00"
+}

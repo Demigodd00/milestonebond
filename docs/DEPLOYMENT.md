@@ -1,4 +1,20 @@
-# StudioNet deployment and verification
+# Deployment and verification
+
+## Current v0.5 Bradbury release
+
+The current [Bradbury deployment record](../deployments/bradbury_v0.5.json),
+[readable source](../contracts/milestone_bond_v0_5.py), reproducible
+[packed source](../contracts/milestone_bond_v0_5_packed.py), and
+[finalized recovery verification](../public/verification-v0.5.json) are
+documented in the [v0.5 evidence trail](BRADBURY_V05_RECOVERY.md). The
+frontend points to this verified address only after the live failed external
+withdrawal and separate reconciliation finalized successfully. The
+`scripts/demo_bradbury_v05.py` and `scripts/finalize_bradbury.py` journals
+guard one-shot submissions; inspect the journal and receipt before any
+recovery operation, never replay a transaction merely because it is slow.
+
+The StudioNet deployments below remain historical. They cannot establish
+Bradbury external-transfer behavior.
 
 ## v0.4 sponsor-funded reserve
 

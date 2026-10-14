@@ -1,0 +1,200 @@
+{
+  "generated_at": "2026-10-14T02:07:10.344822+00:00",
+  "network": "Bradbury testnet",
+  "chain_id": 4221,
+  "scope": "Finalized external rejection and restored test-GEN entitlement; not production insurance",
+  "repository": "https://github.com/Demigodd00/milestonebond",
+  "app_url": "https://demigodd00.github.io/milestonebond/",
+  "contract": "0xf7358a08822cbc439a83225b8cf48f21b10468dc",
+  "contract_url": "https://explorer-bradbury.genlayer.com/address/0xf7358a08822cbc439a83225b8cf48f21b10468dc",
+  "deployment_hash": "0x4274beda3409d76fdf59650ed14dd680ef919695d77501c30fffcd8492ba4124",
+  "source_sha256": "208c024ad231bd9ff0b13f43e0f33a9db8e918ed6adee855f9dbf4f2ae219f41",
+  "readable_source_sha256": "b15253f48790ed1af31434423f5b5e20a0329e535476adaaca7fde149a26b0e5",
+  "source_verified": true,
+  "config": {
+    "admin": null,
+    "authority": "github.com",
+    "challenge_seconds": 600,
+    "delivery_policy": "SPONSOR_APPROVED_UNMERGED_COMMIT",
+    "fee_bps": 0,
+    "max_milestones": 4,
+    "max_revisions_per_milestone": 2,
+    "network_scope": "bradbury-testnet-only",
+    "reserve_policy": "SPONSOR_FUNDS_100_PERCENT_OF_MILESTONE_BUDGET_REFUND_UNUSED_AFTER_CLAIMS",
+    "settlement_proof": "GEN_RECEIPT_MESSAGE_AND_EVM_FINALIZATION",
+    "version": "milestonebond.v0.5"
+  },
+  "project_id": "MB-BRADBURY-FAIL-001",
+  "project": {
+    "accept_by": 1791937039,
+    "accepted_at": 0,
+    "author": "0xc61438037047f3cc7ca519b069e0ae124dde637c",
+    "author_github_id": 121986266,
+    "author_github_login": "Demigodd00",
+    "base_sha": "94d80d7b2eab03baff1c65b55216aa31eb98f652",
+    "claims_outstanding": "2000000000000000",
+    "created_at": 1791936145,
+    "current": 0,
+    "id": "MB-BRADBURY-FAIL-001",
+    "issue_body": "StudioNet MilestoneBond demonstration. Stage 1: modify examples/order_service.py so repeated calls with the same nonempty key return the same order record (idempotency). Stage 2: reject an empty key with ValueError while preserving Stage 1 idempotency. Each stage must be a single direct-child commit, with a same-repository PR and a successful pinned push CI run. This is a public test fixture using simulated GEN, not a production bounty. The CI workflow is a smoke test; GenLayer validators separately assess the source against each frozen criterion.",
+    "issue_number": 1,
+    "issue_sha256": "623020dff6c8e6969e81f5683fdea938d29cc810726b31afd92f756f97d39bb9",
+    "milestones": [
+      {
+        "allowed_paths": [
+          "examples/order_service.py"
+        ],
+        "amount": "1000000000000000",
+        "challenge_until": 0,
+        "criteria": [
+          "Repeated calls with the same nonempty key return the same order record, not a newly numbered order."
+        ],
+        "due_at": 1792022539,
+        "index": 0,
+        "opened_at": 0,
+        "recipient": "0x0bcbcde568096ea2c93e71d5f33acd45be00590e",
+        "reviews": [],
+        "revision": 0,
+        "settled_at": 1791937996,
+        "status": "REFUNDED",
+        "title": "Idempotent order creation"
+      },
+      {
+        "allowed_paths": [
+          "examples/order_service.py"
+        ],
+        "amount": "1000000000000000",
+        "challenge_until": 0,
+        "criteria": [
+          "An empty key raises ValueError while repeated nonempty keys still return their original order record."
+        ],
+        "due_at": 1792108939,
+        "index": 1,
+        "opened_at": 0,
+        "recipient": "",
+        "reviews": [],
+        "revision": 0,
+        "settled_at": 0,
+        "status": "LOCKED",
+        "title": "Reject empty keys"
+      }
+    ],
+    "remaining": "0",
+    "repo": "Demigodd00/milestonebond",
+    "repository_id": 1414972094,
+    "required_job": "acceptance",
+    "reserve_consumed": "0",
+    "reserve_initial": "2000000000000000",
+    "reserve_released": false,
+    "reserve_remaining": "2000000000000000",
+    "sponsor": "0x0bcbcde568096ea2c93e71d5f33acd45be00590e",
+    "status": "REFUNDED",
+    "title": "Live Bradbury failed withdrawal and reserve reconciliation fixture",
+    "workflow_bytes": 414,
+    "workflow_id": 381723182,
+    "workflow_path": ".github/workflows/demo-ci.yml",
+    "workflow_sha256": "4547736e52e9f094a9308f6dca3e1be8a45f551d3ba72a4c62ac04e6c69febe1"
+  },
+  "project_accounting": {
+    "claimable": "2000000000000000",
+    "claims_outstanding": "2000000000000000",
+    "reserve_consumed": "0",
+    "reserve_initial": "2000000000000000",
+    "reserve_released": false,
+    "reserve_remaining": "2000000000000000"
+  },
+  "accounting": {
+    "claimable": "2000000000000000",
+    "contract_balance": "4000000000000000",
+    "credited": "2000000000000000",
+    "deposited": "4000000000000000",
+    "locked": "0",
+    "pending_out": "0",
+    "pending_withdrawal": null,
+    "recovery_topups": "0",
+    "reserve_consumed": "0",
+    "reserve_locked": "2000000000000000",
+    "withdrawn": "0"
+  },
+  "receiver": "0x9ca51A5097764129F888EfBd7bf373ffde9DEDB4",
+  "receiver_runtime": "0x60006000fd",
+  "failure": {
+    "genlayer_transaction_id": "0xfe2ebc1e423c1713da68fcd56ee1d73be5a76a01b88ee33782482d3e8457b24b",
+    "evm_finalization_hash": "0x0f7707a97b218e655ac8a927fe94a832c31b66708db2d0a81d1070087d56e9a8",
+    "evm_block": 25136418,
+    "evm_receipt_status": 1,
+    "failure_event_family": "MessageProcessorFailure",
+    "failed_event_index": 2,
+    "message": [
+      "0",
+      "0x9ca51A5097764129F888EfBd7bf373ffde9DEDB4",
+      "2000000000000000",
+      "b''",
+      "False",
+      "0"
+    ],
+    "receiver": "0x9ca51A5097764129F888EfBd7bf373ffde9DEDB4",
+    "amount": 2000000000000000,
+    "contract_balance_before": 4000000000000000,
+    "contract_balance_after": 4000000000000000,
+    "receiver_balance_before": 0,
+    "receiver_balance_after": 0,
+    "pending_accounting": {
+      "claimable": "0",
+      "contract_balance": "4000000000000000",
+      "credited": "0",
+      "deposited": "4000000000000000",
+      "locked": "0",
+      "pending_out": "2000000000000000",
+      "pending_withdrawal": {
+        "account": "0x0bcbcde568096ea2c93e71d5f33acd45be00590e",
+        "amount": "2000000000000000",
+        "call_method": "withdraw_to",
+        "call_recipient": "0x9ca51A5097764129F888EfBd7bf373ffde9DEDB4",
+        "project_id": "MB-BRADBURY-FAIL-001",
+        "recipient": "0x9ca51a5097764129f888efbd7bf373ffde9dedb4",
+        "request_id": "7777777777777777777777777777777777777777777777777777777777777777",
+        "requested_at": 1791939844
+      },
+      "recovery_topups": "0",
+      "reserve_consumed": "0",
+      "reserve_locked": "2000000000000000",
+      "withdrawn": "0"
+    }
+  },
+  "transactions": [
+    {
+      "method": "create_project",
+      "hash": "0x9224a9882dd09fde5fb6e53564614d54ae01ea8ea6db06f6d474057039ba717d",
+      "url": "https://explorer-bradbury.genlayer.com/tx/0x9224a9882dd09fde5fb6e53564614d54ae01ea8ea6db06f6d474057039ba717d",
+      "status": "FINALIZED",
+      "execution_success": true
+    },
+    {
+      "method": "recover_expired",
+      "hash": "0x4011ed975b3c5693db80ee21bdf051750eba266d2176ad2fde564abccdec1749",
+      "url": "https://explorer-bradbury.genlayer.com/tx/0x4011ed975b3c5693db80ee21bdf051750eba266d2176ad2fde564abccdec1749",
+      "status": "FINALIZED",
+      "execution_success": true
+    },
+    {
+      "method": "withdraw_to",
+      "hash": "0xfe2ebc1e423c1713da68fcd56ee1d73be5a76a01b88ee33782482d3e8457b24b",
+      "url": "https://explorer-bradbury.genlayer.com/tx/0xfe2ebc1e423c1713da68fcd56ee1d73be5a76a01b88ee33782482d3e8457b24b",
+      "status": "FINALIZED",
+      "execution_success": true
+    },
+    {
+      "method": "reconcile_withdrawal",
+      "hash": "0x746ec103d9996ba283e93bd2bb424e816e9d50380459aee5f2aae12194f2ccd5",
+      "url": "https://explorer-bradbury.genlayer.com/tx/0x746ec103d9996ba283e93bd2bb424e816e9d50380459aee5f2aae12194f2ccd5",
+      "status": "FINALIZED",
+      "execution_success": true
+    }
+  ],
+  "limitations": [
+    "Finite sponsor-funded reserve, not unlimited recovery",
+    "A failed transfer restored credit but did not itself pay the sponsor",
+    "The finalization and RPC logs are Bradbury testnet evidence only"
+  ]
+}

@@ -1,5 +1,5 @@
 import {afterEach,describe,expect,it,vi} from 'vitest';
-import {connect,receiptOutcome,verifyDeployment} from './chain';
+import {connect,findFinalization,pendingKeyFor,receiptOutcome,verifyDeployment} from './chain';
 
 afterEach(()=>vi.unstubAllGlobals());
 
@@ -20,6 +20,21 @@ describe('browser wallet handshake',()=>{
   expect(request.mock.calls.map(([call])=>call.method)).toEqual(['eth_requestAccounts','eth_chainId','wallet_switchEthereumChain']);
   expect(request.mock.calls[2][0]).toEqual({method:'wallet_switchEthereumChain',params:[{chainId:'0x'+(61999).toString(16)}]});
  });
+ it('checks Bradbury ghost code even when wallet reports chain ID 4221',async()=>{
+  const d={verified:true,address:'0x1111111111111111111111111111111111111111',chainId:4221,sourceSha256:'a'.repeat(64),version:'milestonebond.v0.5',network:'bradbury'};
+  const request=vi.fn(async({method}:{method:string})=>method==='eth_requestAccounts'?[d.address]:method==='eth_chainId'?'0x107d':method==='eth_getCode'?'0x6000':null);
+  vi.stubGlobal('window',{ethereum:{request}});
+  const session=await connect(d);
+  expect(session.address).toBe(d.address);
+  expect(request.mock.calls.map(([call])=>call.method)).toEqual(['eth_requestAccounts','eth_chainId','eth_getCode']);
+  expect(pendingKeyFor(d)).toBe('milestonebond:pending:v0.5:4221');
+ });
+ it('refuses a 4221 wallet with no Bradbury ghost at the published address',async()=>{
+  const d={verified:true,address:'0x1111111111111111111111111111111111111111',chainId:4221,sourceSha256:'a'.repeat(64),version:'milestonebond.v0.5',network:'bradbury'};
+  const request=vi.fn(async({method}:{method:string})=>method==='eth_requestAccounts'?[d.address]:method==='eth_chainId'?'0x107d':'0x');
+  vi.stubGlobal('window',{ethereum:{request}});
+  await expect(connect(d)).rejects.toThrow('not connected to the Bradbury chain');
+ });
 });
 
 describe('transaction outcome',()=>{
@@ -38,6 +53,29 @@ describe('transaction outcome',()=>{
  });
  it('treats an unknown finalized receipt as unresolved',()=>{
   expect(receiptOutcome({statusName:'FINALIZED'})).toBe('pending');
+ });
+ it('uses raw Bradbury status and execution codes, including unrecognized provisional states',()=>{
+  expect(receiptOutcome({status:5,txExecutionResult:1})).toBe('pending');
+  expect(receiptOutcome({status:14,txExecutionResult:1})).toBe('pending');
+  expect(receiptOutcome({status:7,txExecutionResult:1})).toBe('success');
+  expect(receiptOutcome({status:7,txExecutionResult:2})).toBe('error');
+  expect(receiptOutcome({status:7,txExecutionResult:0})).toBe('pending');
+ });
+});
+
+describe('Bradbury finalization lookup',()=>{
+ it('binds an EVM finalization hash to the exact GenLayer withdrawal ID',async()=>{
+  const parent='0x'+'2'.repeat(64),evm='0x'+'3'.repeat(64);
+  const topic='0x24196ec40f90671b7144e716978686b4f3c7d6b00b23da3971ef2b52af27d87f';
+  const calls:string[]=[];
+  vi.stubGlobal('fetch',vi.fn(async(_url:string,options:{body:string})=>{const req=JSON.parse(options.body);calls.push(req.method);return {ok:true,json:async()=>({result:req.method==='eth_blockNumber'?'0x2710':[{address:'0x0112Bf6e83497965A5fdD6Dad1E447a6E004271D',topics:[topic,parent],transactionHash:evm}]})};}));
+  await expect(findFinalization(parent)).resolves.toBe(evm);
+  expect(calls).toEqual(['eth_blockNumber','eth_getLogs']);
+ });
+ it('keeps a missing finalization unresolved',async()=>{
+  const parent='0x'+'2'.repeat(64);
+  vi.stubGlobal('fetch',vi.fn(async(_url:string,options:{body:string})=>{const req=JSON.parse(options.body);return {ok:true,json:async()=>({result:req.method==='eth_blockNumber'?'0x2710':[]})};}));
+  await expect(findFinalization(parent)).resolves.toBeNull();
  });
 });
 
