@@ -4,4 +4,8 @@ orders = {}
 
 
 def create_order(key):
-    return {"key": key, "sequence": len(orders) + 1}
+    if key in orders:
+        return orders[key]
+    order = {"key": key, "sequence": len(orders) + 1}
+    orders[key] = order
+    return order
